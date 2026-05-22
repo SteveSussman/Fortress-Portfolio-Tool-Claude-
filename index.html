@@ -758,7 +758,7 @@ async function analyzeTrade(ticker,trade,webSearchOn,apiKey){
   const tools=webSearchOn?[{type:'web_search_20250305',name:'web_search'}]:[];
   const body={model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]};
   if(tools.length) body.tools=tools;
-  const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify(body)});
+ const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
   if(!response.ok){const err=await response.json();throw new Error(err.error?.message||`API error ${response.status}`);}
   const data=await response.json();
   let raw='';for(const block of data.content){if(block.type==='text') raw+=block.text;}
