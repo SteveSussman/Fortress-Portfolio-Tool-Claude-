@@ -271,6 +271,12 @@ input:checked+.slider:before{transform:translateX(20px);}
 .error-card{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:13px;padding:1.25rem;display:none;margin-bottom:1rem;}
 .error-card.show{display:block;}
 .error-card p{font-family:var(--mono);font-size:0.8rem;color:#e74c3c;line-height:1.6;}
+.model-btn{background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);color:var(--g3);
+  padding:0.45rem 0.9rem;border-radius:8px;font-family:var(--mono);font-size:0.75rem;
+  cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.model-btn:hover{border-color:var(--gold);color:var(--gold);}
+.model-btn.active{background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold);}
+.model-btn.active.opus{background:rgba(31,111,235,0.15);border-color:var(--blue);color:#5ba3f5;}
 
 /* ── SHARED UTILS ── */
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -310,8 +316,17 @@ input:checked+.slider:before{transform:translateX(20px);}
   <!-- API KEY -->
   <div class="panel gold-border">
     <h3 style="color:var(--gold)">🔑 Claude API Key</h3>
-    <input type="password" class="api-input" id="api-key" placeholder="sk-ant-api03-…" style="width:100%;margin-bottom:0.5rem;">
-    <p class="api-note">Saved automatically. Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · ~$0.005 web search off · ~$0.03 web search on</p>
+    <input type="password" class="api-input" id="api-key" placeholder="sk-ant-api03-…" style="width:100%;margin-bottom:0.75rem;">
+    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">
+      <span style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);">Model:</span>
+      <button class="model-btn active" id="model-sonnet" onclick="setModel('claude-sonnet-4-5',this)">
+        ⚡ Sonnet 4.5 <span style="opacity:0.6;font-size:0.65rem;">~$0.03/run · fast</span>
+      </button>
+      <button class="model-btn" id="model-opus" onclick="setModel('claude-opus-4-5',this)">
+        🧠 Opus 4.5 <span style="opacity:0.6;font-size:0.65rem;">~$0.20/run · deepest</span>
+      </button>
+    </div>
+    <p class="api-note">Key saved automatically · <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Sonnet = fast screening · Opus = high-conviction deep analysis</p>
   </div>
 
   <!-- PORTFOLIO CONTEXT (shared) -->
@@ -343,7 +358,10 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
       <div class="field-group" style="justify-content:flex-end;">
         <label class="field-label">Cache Status</label>
-        <div id="cache-status" style="font-family:var(--mono);font-size:0.72rem;color:var(--g3);padding-top:0.65rem;">No data cached</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding-top:0.5rem;flex-wrap:wrap;">
+          <div id="cache-status" style="font-family:var(--mono);font-size:0.72rem;color:var(--g3);">No data cached</div>
+          <button onclick="clearTickerMemory()" style="font-family:var(--mono);font-size:0.62rem;color:var(--g3);background:none;border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:0.15rem 0.45rem;cursor:pointer;" title="Clear memory for this ticker">🗑</button>
+        </div>
       </div>
     </div>
     <div class="manual-form show" id="manual-form">
@@ -520,6 +538,15 @@ let portfolioContext=null;
 let tradeCount=0;
 let stockCache={};
 const CACHE_TTL=15*60*1000;
+let selectedModel='claude-sonnet-4-5';
+
+function setModel(model, btn){
+  selectedModel=model;
+  document.querySelectorAll('.model-btn').forEach(b=>b.classList.remove('active','opus'));
+  btn.classList.add('active');
+  if(model.includes('opus')) btn.classList.add('opus');
+  localStorage.setItem('fortress_model', model);
+}
 
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('fortress_api_key');
@@ -527,6 +554,15 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('api-key').addEventListener('input',e=>{
     localStorage.setItem('fortress_api_key',e.target.value.trim());
   });
+  const savedModel=localStorage.getItem('fortress_model');
+  if(savedModel){
+    selectedModel=savedModel;
+    if(savedModel.includes('opus')){
+      document.getElementById('model-sonnet').classList.remove('active');
+      const ob=document.getElementById('model-opus');
+      ob.classList.add('active','opus');
+    }
+  }
   document.getElementById('ft-csv-upload').addEventListener('change',e=>{
     if(e.target.files[0]) loadFtPortfolioCSV(e.target.files[0]);
   });
@@ -548,12 +584,12 @@ function onTickerChange(){
   const cached=stockCache[ticker];
   if(cached){
     const age=Math.round((Date.now()-cached.timestamp)/60000);
-    document.getElementById('cache-status').innerHTML=age<15
-      ?`<span class="cache-badge"><span class="cache-dot"></span>${ticker} cached · ${age}m ago</span>`
-      :`<span style="color:var(--g3)">${ticker} cache expired</span>`;
-  } else {
-    document.getElementById('cache-status').textContent='No data cached for '+ticker;
+    if(age<15){
+      document.getElementById('cache-status').innerHTML=`<span class="cache-badge"><span class="cache-dot"></span>${ticker} live · ${age}m ago</span>`;
+      return;
+    }
   }
+  renderMemoryBadge(ticker);
 }
 
 function normalCDF(x){
@@ -738,36 +774,280 @@ async function runAll(){
   if(results.length>1) renderComparison(results);
 }
 
-async function analyzeTrade(ticker,trade,webSearchOn,apiKey){
-  const webSearchStr=webSearchOn?'YES — use web search to fetch live data':'NO — use only manually provided data below';
-  const price=document.getElementById('d-price').value.trim();
-  const ma50=document.getElementById('d-ma50').value.trim();
-  const ma200=document.getElementById('d-ma200').value.trim();
-  const iv=document.getElementById('d-iv').value.trim();
-  const dte=document.getElementById('d-dte').value.trim();
-  const fcf=document.getElementById('d-fcf').value.trim();
-  const spaxx=document.getElementById('d-spaxx').value.trim();
-  const ivrank=document.getElementById('d-ivrank').value.trim();
-  const extraContext=document.getElementById('d-context').value.trim();
-  let manualData='';
-  if(!webSearchOn){
-    manualData=`\nMANUALLY PROVIDED DATA:\n${price?`Price: $${price}`:'Price: not provided — estimate from context'}\n${ma50?`50-Day MA: $${ma50}`:''}\n${ma200?`200-Day MA: $${ma200}`:''}\n${iv?`IV: ${iv}%`:''}\n${ivrank?`IV Rank: ${ivrank}%`:''}\n${dte?`Days to Earnings: ${dte}`:''}\n${fcf?`FCF Yield: ${fcf}%`:''}\n${spaxx?`SPAXX Yield: ${spaxx}%`:'SPAXX: assume ~4.5%'}\n${extraContext?`Context: ${extraContext}`:''}\nFor missing data, use training knowledge and label estimates clearly.`;
+// ── MEMORY SYSTEM ────────────────────────────────────────────────────────────
+// Cache tiers: news/earnings=7 days, companyScore=30 days, price/MAs=session only
+const MEMORY_KEY = 'fortress_ticker_memory';
+
+function loadMemory() {
+  try { return JSON.parse(localStorage.getItem(MEMORY_KEY)||'{}'); } catch{ return {}; }
+}
+function saveMemory(mem) {
+  try { localStorage.setItem(MEMORY_KEY, JSON.stringify(mem)); } catch{}
+}
+function getTickerMemory(ticker) {
+  const mem = loadMemory();
+  return mem[ticker] || null;
+}
+function saveTickerMemory(ticker, cardData) {
+  const mem = loadMemory();
+  const now = Date.now();
+  const d = cardData.dataSnapshot || {};
+  const existing = mem[ticker] || {};
+  mem[ticker] = {
+    lastPull: now,
+    lastPullDate: new Date(now).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    // News: keep 7 days
+    news: cardData.recentNews || existing.news || null,
+    newsDate: (cardData.recentNews ? now : existing.newsDate) || null,
+    // Earnings: keep 7 days
+    earningsDate: d.daysToEarnings || existing.earningsDate || null,
+    earningsDate_ts: d.daysToEarnings ? now : (existing.earningsDate_ts||null),
+    // Company score: keep 30 days
+    companyScore: d.companyScore || existing.companyScore || null,
+    companyScore_ts: d.companyScore ? now : (existing.companyScore_ts||null),
+    // IV rank: keep 3 days
+    ivRank: d.ivRank || existing.ivRank || null,
+    ivRank_ts: d.ivRank ? now : (existing.ivRank_ts||null),
+    // FCF: keep 30 days
+    fcfYield: d.fcfYield || existing.fcfYield || null,
+    fcfYield_ts: d.fcfYield ? now : (existing.fcfYield_ts||null),
+    // SPAXX: keep 7 days
+    spaxYield: d.spaxYield || existing.spaxYield || null,
+    spaxYield_ts: d.spaxYield ? now : (existing.spaxYield_ts||null),
+    // MAs: session only (not persisted across days)
+    ma50: d.ma50 || null,
+    ma200: d.ma200 || null,
+    ma_ts: d.ma50 ? now : null,
+  };
+  saveMemory(mem);
+}
+
+function buildMemoryContext(ticker) {
+  const m = getTickerMemory(ticker);
+  if (!m) return '';
+  const now = Date.now();
+  const dayMs = 86400000;
+  const age = d => Math.round((now - d) / dayMs);
+  const fresh = (ts, days) => ts && (now - ts) < days * dayMs;
+  let lines = [];
+  const pullAge = age(m.lastPull);
+  lines.push(`CACHED MEMORY FOR ${ticker} (last web pull: ${m.lastPullDate}, ${pullAge} day${pullAge===1?'':'s'} ago):`);
+  if (fresh(m.newsDate, 7) && m.news) lines.push(`• Recent News (${age(m.newsDate)}d ago): ${m.news}`);
+  if (fresh(m.earningsDate_ts, 7) && m.earningsDate) lines.push(`• Earnings (${age(m.earningsDate_ts)}d ago): ~${m.earningsDate} days away at time of pull — recalculate current DTE`);
+  if (fresh(m.companyScore_ts, 30) && m.companyScore) lines.push(`• Company Score (${age(m.companyScore_ts)}d ago): ${m.companyScore}/100 — use unless fundamentals changed`);
+  if (fresh(m.ivRank_ts, 3) && m.ivRank) lines.push(`• IV Rank (${age(m.ivRank_ts)}d ago): ${m.ivRank} — treat as directional only, IV shifts daily`);
+  if (fresh(m.fcfYield_ts, 30) && m.fcfYield) lines.push(`• FCF Yield (${age(m.fcfYield_ts)}d ago): ${m.fcfYield} — stable, use unless new earnings`);
+  if (fresh(m.spaxYield_ts, 7) && m.spaxYield) lines.push(`• SPAXX Yield (${age(m.spaxYield_ts)}d ago): ${m.spaxYield} — reasonably current`);
+  if (fresh(m.ma_ts, 1) && m.ma50) lines.push(`• MAs from earlier today: 50d=$${m.ma50} 200d=$${m.ma200||'—'} — current session only`);
+  if (lines.length === 1) return ''; // only header, nothing useful
+  lines.push(`NOTE: Price and MAs are NOT from memory — always fresh from manual input or web search. Flag any memory data older than its threshold as potentially stale.`);
+  return lines.join('\n');
+}
+
+function renderMemoryBadge(ticker) {
+  const m = getTickerMemory(ticker);
+  const el = document.getElementById('cache-status');
+  if (!m || !el) return;
+  const age = Math.round((Date.now() - m.lastPull) / 86400000);
+  if (age === 0) {
+    el.innerHTML = `<span class="cache-badge"><span class="cache-dot"></span>${ticker} · pulled today</span>`;
+  } else {
+    el.innerHTML = `<span class="cache-badge" style="background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.2);color:var(--gold);">🗂 ${ticker} · ${age}d ago memory</span>`;
   }
-  let portfolioStr=portfolioContext?`\nPORTFOLIO CONTEXT:\nCash: ${portfolioContext.cash} · Available: ${portfolioContext.availableCash}\nEquity: ${portfolioContext.equityValue} · G/L: ${portfolioContext.totalGL}\nCSP Notional: ${portfolioContext.cspNotional} · Spread: ${portfolioContext.spreadNotional}\nWtd Risk: ${portfolioContext.weightedNotional} · Buffer: ${portfolioContext.bufferVsWeighted}\nPositions (${portfolioContext.positionCount}): ${portfolioContext.top5Positions}`:`\nPORTFOLIO (defaults): ~$4.5M total, ~$2.75M available after reserves. User 45, wealth preservation, MSFT+ADBE anchors.`;
-  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-const prompt=`You are Fortress Engine v3.2 — institutional options analysis.\nTODAY'S DATE: ${today}. Use this to calculate exact DTE for all trades.\nUSE WEB SEARCH: ${webSearchStr}\nTRADE: ${trade.desc}\n${trade.notes?`NOTES: ${trade.notes}`:''}\n${manualData}\n${portfolioStr}\nFORTRESS RULES: Preservation paramount. No hallucinated prices. Calculate Greeks via Black-Scholes. Goal 12%+ blended annualized.\n\nRespond ONLY with valid JSON, no markdown, no text outside JSON:\n{"liveConfirmed":true,"livePrice":244.10,"livePriceSource":"source","tradeDescription":"full desc","ticker":"${ticker}","tradeType":"${trade.type}","dataSnapshot":{"underlying":244.10,"ma50":250.00,"ma200":260.00,"ivRank":"45%","daysToEarnings":42,"fcfYield":"3.2%","companyScore":78,"spaxYield":"4.52%"},"returnProfile":{"cashSecured":22000,"premiumCollected":450,"premiumYield":"2.05%","daysInTrade":28,"annualizedReturn":"26.7%","spaxxContribution":"0.35%","totalReturn":"2.40%","blendedAnnualized":"31.2%"},"greeks":{"delta":{"value":-0.19,"insight":"brief"},"theta":{"value":0.85,"insight":"brief"},"gamma":{"value":0.02,"insight":"brief"},"vega":{"value":-8.50,"insight":"brief"}},"risk":{"effectiveEntry":215.50,"bufferToStrike":"10.1%","bufferToEffectiveEntry":"14.3%"},"probability":{"pop":"81%","poa":"19%","edgeScore":"72/100"},"generationalEntry":{"good":{"range":"$230–$210","description":"brief"},"great":{"range":"$210–$185","description":"brief"},"legendary":{"range":"≤$185","description":"brief"},"currentTier":"Good"},"decision":{"overallScore":74,"companyScore":78,"entryScore":68,"verdict":"TAKE","reasoning":"2-3 sentence reasoning","suggestedContracts":"2–3","sizingNote":"brief"},"portfolioImpact":{"additionalNotional":22000,"newWeightedRisk":"brief","concentrationNote":"brief","cashBufferAfter":"brief"},"fortressRulesCheck":["✅ rule 1","⚠️ warning if any"]}`;
-  const tools=webSearchOn?[{type:'web_search_20250305',name:'web_search'}]:[];
-  const body={model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]};
-  if(tools.length) body.tools=tools;
- const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
-  if(!response.ok){const err=await response.json();throw new Error(err.error?.message||`API error ${response.status}`);}
-  const data=await response.json();
-  let raw='';for(const block of data.content){if(block.type==='text') raw+=block.text;}
-  raw=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-  const js=raw.indexOf('{'),je=raw.lastIndexOf('}');
-  if(js===-1||je===-1) throw new Error('No JSON in response: '+raw.slice(0,200));
-  const card=JSON.parse(raw.slice(js,je+1));
-  if(webSearchOn&&card.dataSnapshot){stockCache[ticker]={data:card.dataSnapshot,timestamp:Date.now()};onTickerChange();}
+}
+
+function clearTickerMemory(){
+  const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
+  if(!ticker) return;
+  const mem=loadMemory();
+  delete mem[ticker];
+  saveMemory(mem);
+  delete stockCache[ticker];
+  document.getElementById('cache-status').textContent='Memory cleared for '+ticker;
+}
+
+// ── PRE-CALCULATION ENGINE ───────────────────────────────────────────────────
+function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx) {
+  const S = parseFloat(manualPrice) || 0;
+  const K = parseFloat(trade.strike) || 0;
+  const premium = parseFloat(trade.premium) || 0;
+  const contracts = parseFloat(trade.contracts) || 1;
+  const longStrike = parseFloat(trade.longStrike) || 0;
+  const spaxx = parseFloat(manualSpaxx) || 4.5;
+
+  // Parse expiry
+  const expDate = new Date(trade.exp);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dte = Math.max(0, Math.round((expDate - today) / 86400000));
+  const dteYears = dte / 365;
+
+  // Core math
+  const effectiveEntry = K - premium;
+  const bufferToStrike = S > 0 ? ((S - K) / S * 100) : 0;
+  const bufferToEffEntry = S > 0 ? ((S - effectiveEntry) / S * 100) : 0;
+  const cashSecured = trade.type === 'spread' && longStrike
+    ? (K - longStrike) * contracts * 100
+    : K * contracts * 100;
+  const premiumCollected = premium * contracts * 100;
+  const premiumYieldPct = cashSecured > 0 ? (premiumCollected / cashSecured * 100) : 0;
+  const annualizedPct = dteYears > 0 ? (premiumYieldPct / (dte / 365)) : 0;
+  const spaxxContribPct = spaxx * (dte / 365);
+  const totalReturnPct = premiumYieldPct + spaxxContribPct;
+  const blendedAnnPct = dteYears > 0 ? (totalReturnPct / (dte / 365)) : 0;
+  const maxLoss = trade.type === 'spread' && longStrike
+    ? (K - longStrike - premium) * contracts * 100
+    : (K - premium) * contracts * 100;
+  const breakEven = effectiveEntry;
+
+  // Greeks via Black-Scholes
+  let greeks = {delta:0,gamma:0,theta:0,vega:0};
+  if (S > 0 && manualIV) {
+    greeks = bsGreeks(S, K, dteYears, 0.045, parseFloat(manualIV)/100, true);
+  }
+  const pop = greeks.delta !== 0 ? ((1 - Math.abs(greeks.delta)) * 100).toFixed(1) : null;
+
+  // Portfolio impact
+  let additionalNotional = K * contracts * 100;
+  let additionalWtd = 0;
+  if (greeks.delta) {
+    const absDelta = Math.abs(greeks.delta);
+    const wt = absDelta < 0.1 ? 0.4 : absDelta < 0.2 ? 0.6 : absDelta < 0.3 ? 0.8 : 1;
+    additionalWtd = additionalNotional * wt;
+  }
+  const newBuffer = portfolioContext
+    ? portfolioContext.rawAvail - portfolioContext.rawWeightedNotional - additionalWtd
+    : null;
+
+  return {
+    dte, dteYears, effectiveEntry, bufferToStrike, bufferToEffEntry,
+    cashSecured, premiumCollected, premiumYieldPct, annualizedPct,
+    spaxxContribPct, totalReturnPct, blendedAnnPct, maxLoss, breakEven,
+    greeks, pop, additionalNotional, additionalWtd, newBuffer, contracts, spaxx
+  };
+}
+
+async function analyzeTrade(ticker, trade, webSearchOn, apiKey) {
+  // ── Today's date ──────────────────────────────────────────────────────────
+  const today = new Date();
+  const todayStr = today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+
+  // ── Manual inputs ─────────────────────────────────────────────────────────
+  const price   = document.getElementById('d-price').value.trim();
+  const ma50    = document.getElementById('d-ma50').value.trim();
+  const ma200   = document.getElementById('d-ma200').value.trim();
+  const iv      = document.getElementById('d-iv').value.trim();
+  const dteMan  = document.getElementById('d-dte').value.trim();
+  const fcf     = document.getElementById('d-fcf').value.trim();
+  const spaxx   = document.getElementById('d-spaxx').value.trim();
+  const ivrank  = document.getElementById('d-ivrank').value.trim();
+  const extraContext = document.getElementById('d-context').value.trim();
+
+  // ── Pre-calculate all math locally ───────────────────────────────────────
+  const pre = preCalcTrade(trade, price, iv, spaxx);
+
+  const fmt2 = n => isNaN(n) ? '—' : n.toFixed(2);
+  const fmtPct = n => isNaN(n) ? '—' : n.toFixed(2) + '%';
+  const fmtDollar = n => isNaN(n) ? '—' : '$' + Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
+
+  const preCalcStr = `
+PRE-CALCULATED MATH (use these exact numbers — do not recalculate):
+• Today: ${todayStr}
+• Expiration: ${trade.exp} → DTE: ${pre.dte} days (${(pre.dte/365).toFixed(3)} years)
+• Contracts: ${pre.contracts}
+• Strike: $${trade.strike} | Premium: $${trade.premium}
+• Effective Entry (Strike − Premium): $${fmt2(pre.effectiveEntry)}
+• Break-Even: $${fmt2(pre.breakEven)}
+• Cash Secured / Max Risk: ${fmtDollar(pre.cashSecured)}
+• Premium Collected (${pre.contracts} contracts): ${fmtDollar(pre.premiumCollected)}
+• Premium Yield: ${fmtPct(pre.premiumYieldPct)} over ${pre.dte} days
+• Annualized Premium Return: ${fmtPct(pre.annualizedPct)}
+• SPAXX Contribution (${fmtPct(pre.spaxxContribPct)} for period @ ${pre.spaxx}% annual): ${fmtPct(pre.spaxxContribPct)}
+• Total Return (premium + SPAXX): ${fmtPct(pre.totalReturnPct)}
+• Blended Annualized: ${fmtPct(pre.blendedAnnPct)}
+• Max Loss: ${fmtDollar(pre.maxLoss)}
+${price ? `• Buffer to Strike: ${fmtPct(pre.bufferToStrike)} (stock at $${price})` : '• Buffer to Strike: price not provided'}
+${price ? `• Buffer to Effective Entry: ${fmtPct(pre.bufferToEffEntry)}` : ''}
+${pre.greeks.delta !== 0 ? `• Greeks (Black-Scholes): Delta=${pre.greeks.delta} Theta=${pre.greeks.theta}/day Gamma=${pre.greeks.gamma} Vega=${pre.greeks.vega}` : '• Greeks: provide IV% in market data for auto-calculation'}
+${pre.pop ? `• PoP (from delta): ~${pre.pop}%` : ''}
+${pre.newBuffer !== null ? `• Cash Buffer After This Trade: ${fmtDollar(pre.newBuffer)} (from portfolio CSV)` : ''}
+`;
+
+  // ── Memory context ────────────────────────────────────────────────────────
+  const memoryStr = buildMemoryContext(ticker);
+
+  // ── Manual data string ────────────────────────────────────────────────────
+  const webSearchStr = webSearchOn
+    ? 'YES — use web search. Fetch: current price, 50d MA, 200d MA, next earnings date, recent notable news (1-3 bullets max), IV environment, SPAXX current yield. Store news in the recentNews field of your JSON response.'
+    : 'NO — do not use web search. Use manually provided data and memory context below.';
+
+  let manualData = '';
+  if (!webSearchOn) {
+    manualData = `\nMANUALLY PROVIDED MARKET DATA:\n${price?`• Current Price: $${price}`:'• Current Price: NOT PROVIDED'}\n${ma50?`• 50-Day MA: $${ma50}`:''}\n${ma200?`• 200-Day MA: $${ma200}`:''}\n${iv?`• IV: ${iv}%`:''}\n${ivrank?`• IV Rank: ${ivrank}%`:''}\n${dteMan?`• Days to Earnings (manual): ${dteMan}`:''}\n${fcf?`• FCF Yield: ${fcf}%`:''}\n${spaxx?`• SPAXX Yield: ${spaxx}%`:''}\n${extraContext?`• Context: ${extraContext}`:''}\nFor any missing data, use memory context below if available, then training knowledge — always label the source.`;
+  }
+
+  // ── Portfolio context ─────────────────────────────────────────────────────
+  const portfolioStr = portfolioContext
+    ? `\nLIVE PORTFOLIO (from CSV):\nCash: ${portfolioContext.cash} · Available: ${portfolioContext.availableCash}\nEquity: ${portfolioContext.equityValue} · G/L: ${portfolioContext.totalGL}\nCSP Notional: ${portfolioContext.cspNotional} · Spreads: ${portfolioContext.spreadNotional}\nWtd Risk: ${portfolioContext.weightedNotional} · Buffer: ${portfolioContext.bufferVsWeighted}\nTop positions: ${portfolioContext.top5Positions}`
+    : `\nPORTFOLIO (defaults): ~$4.5M total, ~$2.75M available after $1.25M tax reserve + $500K crash reserve. User 45, wealth preservation first, MSFT+ADBE anchors.`;
+
+  const prompt = `You are Fortress Engine v3.2 — institutional-grade options analysis engine.
+
+TODAY: ${todayStr}
+USE WEB SEARCH: ${webSearchStr}
+
+TRADE TO EVALUATE:
+${trade.desc}${trade.notes ? `\nUSER NOTES: ${trade.notes}` : ''}
+
+${preCalcStr}
+${manualData}
+${memoryStr ? memoryStr + '\n' : ''}${portfolioStr}
+
+FORTRESS RULES:
+• Preservation paramount — assignment at Great/Legendary entry = acceptable outcome
+• Goal: 12%+ blended annualized (premium + SPAXX)
+• No estimates on pre-calculated fields above — use them exactly
+• For company/fundamental judgment, use web search data or memory context or training knowledge (label source)
+• Flag any earnings risk if DTE crosses a likely earnings window
+• Do NOT recalculate any math already provided in PRE-CALCULATED MATH section
+
+YOUR TASKS:
+1. Use the pre-calculated numbers exactly as provided
+2. Add judgment: company quality, entry tier assessment, verdict
+3. If web search ON: fetch price, MAs, earnings date, 1-3 recent news bullets, SPAXX yield
+4. Produce the JSON below — no markdown, no text outside JSON
+
+{"liveConfirmed":true,"livePrice":244.10,"livePriceSource":"source or manual or memory","recentNews":"1-3 bullet news summary or null","tradeDescription":"full desc","ticker":"${ticker}","tradeType":"${trade.type}","dataSnapshot":{"underlying":244.10,"ma50":250.00,"ma200":260.00,"ivRank":"45%","daysToEarnings":42,"fcfYield":"3.2%","companyScore":78,"spaxYield":"4.52%"},"returnProfile":{"cashSecured":${pre.cashSecured.toFixed(0)},"premiumCollected":${pre.premiumCollected.toFixed(0)},"premiumYield":"${fmtPct(pre.premiumYieldPct)}","daysInTrade":${pre.dte},"annualizedReturn":"${fmtPct(pre.annualizedPct)}","spaxxContribution":"${fmtPct(pre.spaxxContribPct)}","totalReturn":"${fmtPct(pre.totalReturnPct)}","blendedAnnualized":"${fmtPct(pre.blendedAnnPct)}"},"greeks":{"delta":{"value":${pre.greeks.delta||"null"},"insight":"your insight"},"theta":{"value":${pre.greeks.theta||"null"},"insight":"your insight"},"gamma":{"value":${pre.greeks.gamma||"null"},"insight":"your insight"},"vega":{"value":${pre.greeks.vega||"null"},"insight":"your insight"}},"risk":{"effectiveEntry":${pre.effectiveEntry.toFixed(2)},"bufferToStrike":"${fmtPct(pre.bufferToStrike)}","bufferToEffectiveEntry":"${fmtPct(pre.bufferToEffEntry)}","maxLoss":${pre.maxLoss.toFixed(0)},"breakEven":${pre.breakEven.toFixed(2)}},"probability":{"pop":"${pre.pop||'—'}%","poa":"${pre.pop?(100-parseFloat(pre.pop)).toFixed(1):'—'}%","edgeScore":"your score/100"},"generationalEntry":{"good":{"range":"$X–$X","description":"brief"},"great":{"range":"$X–$X","description":"brief"},"legendary":{"range":"≤$X","description":"brief"},"currentTier":"Good or Great or Legendary or Above Good"},"decision":{"overallScore":74,"companyScore":78,"entryScore":68,"verdict":"TAKE or ADJUST or PASS","reasoning":"2-3 sentence reasoning referencing DTE, return vs 12% target, entry quality","suggestedContracts":"X–X","sizingNote":"brief Fortress sizing note"},"portfolioImpact":{"additionalNotional":${pre.additionalNotional.toFixed(0)},"additionalWeightedRisk":${pre.additionalWtd.toFixed(0)},"newBufferEstimate":"${pre.newBuffer !== null ? fmtDollar(pre.newBuffer) : 'load CSV for exact figure'}","concentrationNote":"brief note on ticker concentration","cashBufferAfter":"brief"},"fortressRulesCheck":["✅ or ⚠️ each relevant rule"]}`;
+
+  const tools = webSearchOn ? [{type:'web_search_20250305',name:'web_search'}] : [];
+  const body = {model:selectedModel, max_tokens:selectedModel.includes('opus')?4000:3000, messages:[{role:'user',content:prompt}]};
+  if (tools.length) body.tools = tools;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify(body)
+  });
+  if (!response.ok) { const err=await response.json(); throw new Error(err.error?.message||`API error ${response.status}`); }
+  const data = await response.json();
+  let raw = ''; for (const block of data.content) { if (block.type==='text') raw += block.text; }
+  raw = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  const js = raw.indexOf('{'), je = raw.lastIndexOf('}');
+  if (js===-1||je===-1) throw new Error('No JSON in response: '+raw.slice(0,200));
+  const card = JSON.parse(raw.slice(js,je+1));
+
+  // Save to memory
+  if (webSearchOn) {
+    saveTickerMemory(ticker, card);
+    stockCache[ticker] = {data:card.dataSnapshot, timestamp:Date.now()};
+    onTickerChange();
+  }
+  renderMemoryBadge(ticker);
   return card;
 }
 
@@ -785,7 +1065,8 @@ function renderCard(c,num,total){
       <div class="card-ticker">${c.ticker||''} ${total>1?`<span style="font-size:0.85rem;color:var(--g3);font-weight:400">· Trade ${num}</span>`:''}
       </div>${dec.verdict?`<span class="verdict-pill vp-${verdictClass(dec.verdict)}" style="font-size:0.9rem;padding:0.35rem 1rem;">${dec.verdict}</span>`:''}</div>
     <div class="card-trade-desc">${c.tradeDescription||''}</div>
-    ${c.liveConfirmed?`<div class="card-live-confirm"><span class="live-dot"></span>Price: $${c.livePrice} · ${c.livePriceSource||''}</div>`:''}</div>
+    ${c.liveConfirmed?`<div class="card-live-confirm"><span class="live-dot"></span>Price: $${c.livePrice} · ${c.livePriceSource||''}</div>`:''}
+    ${c.recentNews?`<div style="margin-top:0.6rem;font-family:var(--mono);font-size:0.7rem;color:var(--g3);background:rgba(255,255,255,0.04);border-radius:7px;padding:0.5rem 0.75rem;line-height:1.7;"><span style="color:var(--gold);">📰 Recent News</span><br>${c.recentNews}</div>`:''}</div>
   <div class="card-body">
     <div class="card-section"><div class="card-section-title">📍 Data Snapshot</div>
       <div class="dg">
@@ -809,7 +1090,9 @@ function renderCard(c,num,total){
       <div class="dg">
         <div><div class="di-label">Effective Entry</div><div class="di-val">$${risk.effectiveEntry||'—'}</div></div>
         <div><div class="di-label">Buffer to Strike</div><div class="di-val">${risk.bufferToStrike||'—'}</div></div>
-        <div><div class="di-label">Buffer to Eff. Entry</div><div class="di-val">${risk.bufferToEffectiveEntry||'—'}</div></div></div></div>
+        <div><div class="di-label">Buffer to Eff. Entry</div><div class="di-val">${risk.bufferToEffectiveEntry||'—'}</div></div>
+        <div><div class="di-label">Break-Even</div><div class="di-val">$${risk.breakEven||'—'}</div></div>
+        <div><div class="di-label">Max Loss</div><div class="di-val neg">${risk.maxLoss?'($'+Math.abs(risk.maxLoss).toLocaleString()+')'  :'—'}</div></div></div></div>
     <div class="card-section"><div class="card-section-title">🎯 Probability & Edge</div>
       <div class="dg" style="margin-bottom:0.65rem;">
         <div><div class="di-label">PoP</div><div class="di-val pos">${prob.pop||'—'}</div></div>
