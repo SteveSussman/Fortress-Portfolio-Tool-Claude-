@@ -271,16 +271,129 @@ input:checked+.slider:before{transform:translateX(20px);}
 .error-card{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:13px;padding:1.25rem;display:none;margin-bottom:1rem;}
 .error-card.show{display:block;}
 .error-card p{font-family:var(--mono);font-size:0.8rem;color:#e74c3c;line-height:1.6;}
+.data-src-btn{
+  background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);color:var(--g3);
+  padding:0.45rem 0.9rem;border-radius:8px;font-family:var(--mono);font-size:0.73rem;
+  cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;
+}
+.data-src-btn:hover{border-color:var(--gold);color:var(--gold);}
+.data-src-btn.active{background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold);}
+.data-src-btn.active.gemini{background:rgba(66,133,244,0.15);border-color:#4285f4;color:#4285f4;}
 .model-btn{background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);color:var(--g3);
   padding:0.45rem 0.9rem;border-radius:8px;font-family:var(--mono);font-size:0.75rem;
   cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
 .model-btn:hover{border-color:var(--gold);color:var(--gold);}
 .model-btn.active{background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold);}
 .model-btn.active.opus{background:rgba(31,111,235,0.15);border-color:var(--blue);color:#5ba3f5;}
+/* Model checkbox buttons */
+.model-check-btn{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);
+  color:var(--g3);padding:0.4rem 0.85rem;border-radius:8px;
+  font-family:var(--mono);font-size:0.73rem;cursor:pointer;
+  transition:all 0.2s;-webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.model-check-btn:has(input:checked){
+  background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);
+}
+.model-check-btn input[type="checkbox"]{
+  width:14px;height:14px;accent-color:var(--gold);cursor:pointer;
+}
+.model-cost{opacity:0.55;font-size:0.62rem;margin-left:0.2rem;}
+.model-key-input{
+  background:var(--navy-lt);border:1px solid rgba(255,255,255,0.08);
+  border-radius:7px;padding:0.45rem 0.75rem;color:#fff;
+  font-family:var(--mono);font-size:0.72rem;outline:none;
+  width:220px;flex-shrink:0;
+}
+.model-key-input:focus{border-color:rgba(201,168,76,0.4);}
+.model-key-input::placeholder{color:var(--g3);}
+/* Synthesis button */
+.synthesize-btn{
+  width:100%;background:linear-gradient(135deg,rgba(31,111,235,0.2),rgba(201,168,76,0.15));
+  border:1px solid rgba(201,168,76,0.35);color:#fff;
+  padding:0.85rem;border-radius:10px;
+  font-family:var(--sans);font-size:0.95rem;font-weight:800;
+  cursor:pointer;transition:all 0.2s;margin-top:0.75rem;
+  box-shadow:0 4px 20px rgba(31,111,235,0.15);
+  -webkit-tap-highlight-color:transparent;display:none;
+}
+.synthesize-btn:hover{background:linear-gradient(135deg,rgba(31,111,235,0.3),rgba(201,168,76,0.25));}
+.synthesize-btn:disabled{opacity:0.4;cursor:not-allowed;}
+/* Synthesis card */
+.synthesis-card{
+  background:linear-gradient(135deg,var(--navy-mid),rgba(31,111,235,0.05));
+  border-radius:16px;border:1px solid rgba(31,111,235,0.3);
+  overflow:hidden;margin-top:1rem;display:none;
+}
+.synthesis-card.show{display:block;}
+.synthesis-banner{
+  background:linear-gradient(135deg,rgba(31,111,235,0.15),rgba(201,168,76,0.1));
+  padding:1rem 1.4rem;border-bottom:1px solid rgba(31,111,235,0.15);
+}
+.synthesis-title{font-size:1.1rem;font-weight:800;color:#fff;}
+.synthesis-subtitle{font-family:var(--mono);font-size:0.72rem;color:var(--g3);margin-top:0.25rem;}
+/* Model badge on cards */
+.model-badge{
+  display:inline-flex;align-items:center;gap:0.3rem;
+  padding:0.2rem 0.65rem;border-radius:20px;
+  font-family:var(--mono);font-size:0.65rem;font-weight:500;
+  margin-bottom:0.5rem;
+}
+.mb-claude{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.25);}
+.mb-openai{background:rgba(16,163,127,0.15);color:#10a37f;border:1px solid rgba(16,163,127,0.25);}
+.mb-google{background:rgba(66,133,244,0.15);color:#4285f4;border:1px solid rgba(66,133,244,0.25);}
+.mb-xai{background:rgba(255,255,255,0.08);color:var(--g1);border:1px solid rgba(255,255,255,0.15);}
+.mb-synthesis{background:rgba(31,111,235,0.2);color:#5ba3f5;border:1px solid rgba(31,111,235,0.3);}
 
 /* ── SHARED UTILS ── */
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+/* Protocol v3.4 */
+/* History Panel */
+.history-panel{background:var(--navy-mid);border-radius:13px;border:1px solid rgba(255,255,255,0.07);margin-bottom:1rem;overflow:hidden;}
+.history-header{padding:0.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.history-header h3{font-size:0.85rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;margin-bottom:0;}
+.history-body{display:none;padding:0.75rem;}
+.history-body.show{display:block;}
+.history-controls{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem;align-items:center;}
+.history-search{background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem 0.85rem;color:#fff;font-family:var(--mono);font-size:0.78rem;outline:none;flex:1;min-width:140px;}
+.history-search:focus{border-color:var(--gold);}
+.history-search::placeholder{color:var(--g3);}
+.history-sort{background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.5rem 0.75rem;color:var(--g1);font-family:var(--mono);font-size:0.72rem;outline:none;cursor:pointer;}
+.history-load-btn{background:var(--gold);color:var(--navy);border:none;padding:0.5rem 1rem;border-radius:8px;font-family:var(--sans);font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;display:none;}
+.history-load-btn:hover{background:var(--gold-d);}
+.history-load-btn.show{display:block;}
+.history-clear-btn{background:none;border:1px solid rgba(231,76,60,0.25);color:#e74c3c;padding:0.45rem 0.75rem;border-radius:8px;font-family:var(--mono);font-size:0.7rem;cursor:pointer;}
+.history-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:0.72rem;}
+.history-table th{background:var(--navy-lt);padding:0.5rem 0.65rem;text-align:left;color:var(--g3);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1;}
+.history-table th:hover{color:var(--gold);}
+.history-table th.sort-asc::after{content:' ▲';color:var(--gold);}
+.history-table th.sort-desc::after{content:' ▼';color:var(--gold);}
+.history-table td{padding:0.5rem 0.65rem;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.history-table tr:hover td{background:rgba(255,255,255,0.02);}
+.history-table tr.selected-row td{background:rgba(201,168,76,0.07);}
+.history-check{width:15px;height:15px;accent-color:var(--gold);cursor:pointer;}
+.history-ticker{color:#fff;font-weight:500;}
+.history-verdict{display:inline-block;padding:0.1rem 0.4rem;border-radius:10px;font-size:0.63rem;font-weight:700;}
+.hv-take{background:rgba(39,174,96,0.15);color:var(--green);}
+.hv-pass{background:rgba(231,76,60,0.15);color:#e74c3c;}
+.hv-adjust{background:rgba(230,126,34,0.15);color:#e67e22;}
+.history-empty{font-family:var(--mono);font-size:0.78rem;color:var(--g3);text-align:center;padding:1.5rem;line-height:1.6;}
+.history-table-wrap{max-height:320px;overflow-y:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.06);}
+.protocol-section{background:rgba(31,111,235,0.05);border:1px solid rgba(31,111,235,0.15);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.35rem;}
+.protocol-title{font-family:var(--mono);font-size:0.62rem;color:#5ba3f5;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.65rem;display:flex;align-items:center;justify-content:space-between;}
+.protocol-composite{font-family:var(--mono);font-size:0.72rem;font-weight:500;}
+.protocol-metric{display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.6rem;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:0.35rem;gap:0.5rem;}
+.protocol-metric-label{font-family:var(--mono);font-size:0.68rem;color:var(--g3);flex:1;}
+.protocol-metric-val{font-family:var(--mono);font-size:0.75rem;color:#fff;font-weight:500;text-align:right;white-space:nowrap;}
+.protocol-score{display:inline-block;padding:0.1rem 0.45rem;border-radius:12px;font-size:0.65rem;font-weight:700;margin-left:0.4rem;}
+.ps-elite{background:rgba(39,174,96,0.2);color:var(--green);border:1px solid rgba(39,174,96,0.3);}
+.ps-strong{background:rgba(201,168,76,0.2);color:var(--gold);border:1px solid rgba(201,168,76,0.3);}
+.ps-ok{background:rgba(230,126,34,0.2);color:#e67e22;border:1px solid rgba(230,126,34,0.3);}
+.ps-weak{background:rgba(231,76,60,0.2);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);}
+.protocol-interp{font-family:var(--mono);font-size:0.68rem;color:var(--g3);line-height:1.6;margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.05);}
 .fade-in{animation:fadeIn 0.35s ease both;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .s1{animation-delay:0.04s;}.s2{animation-delay:0.08s;}.s3{animation-delay:0.12s;}
@@ -317,16 +430,78 @@ input:checked+.slider:before{transform:translateX(20px);}
   <div class="panel gold-border">
     <h3 style="color:var(--gold)">🔑 Claude API Key</h3>
     <input type="password" class="api-input" id="api-key" placeholder="sk-ant-api03-…" style="width:100%;margin-bottom:0.75rem;">
-    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem;">
-      <span style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);">Model:</span>
-      <button class="model-btn active" id="model-sonnet" onclick="setModel('claude-sonnet-4-5',this)">
-        ⚡ Sonnet 4.5 <span style="opacity:0.6;font-size:0.65rem;">~$0.03/run · fast</span>
-      </button>
-      <button class="model-btn" id="model-opus" onclick="setModel('claude-opus-4-5',this)">
-        🧠 Opus 4.5 <span style="opacity:0.6;font-size:0.65rem;">~$0.20/run · deepest</span>
-      </button>
+    <p class="api-note" style="margin-bottom:0.75rem;">Claude key saved automatically · <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></p>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:0.85rem;">
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--gold);margin-bottom:0.6rem;">SELECT MODELS TO RUN <span style="color:var(--g3);font-size:0.62rem;">(check any combination)</span></div>
+
+      <!-- Claude models (use main API key) -->
+      <div style="margin-bottom:0.6rem;">
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--g3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Anthropic (Claude key above)</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <label class="model-check-btn" id="mcb-sonnet">
+            <input type="checkbox" id="mc-sonnet" value="claude-sonnet-4-5" checked onchange="updateModelSelection()">
+            ⚡ Claude Sonnet 4.5 <span class="model-cost">~$0.03</span>
+          </label>
+          <label class="model-check-btn" id="mcb-opus">
+            <input type="checkbox" id="mc-opus" value="claude-opus-4-5" onchange="updateModelSelection()">
+            🧠 Claude Opus 4.5 <span class="model-cost">~$0.20</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- OpenAI -->
+      <div style="margin-bottom:0.6rem;">
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--g3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">OpenAI</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <label class="model-check-btn" id="mcb-gpt5">
+            <input type="checkbox" id="mc-gpt5" value="gpt-5" onchange="updateModelSelection()">
+            🤖 GPT-5.5 <span class="model-cost">~$0.08</span>
+          </label>
+          <input type="password" id="key-openai" class="model-key-input" placeholder="OpenAI API key (sk-...)">
+        </div>
+      </div>
+
+      <!-- Google -->
+      <div style="margin-bottom:0.6rem;">
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--g3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Google</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <label class="model-check-btn" id="mcb-gemini">
+            <input type="checkbox" id="mc-gemini" value="gemini-2.5-pro" onchange="updateModelSelection()">
+            ✨ Gemini 2.5 Pro <span class="model-cost">~$0.10</span>
+          </label>
+          <input type="password" id="key-google" class="model-key-input" placeholder="Google AI Studio key (AIza...)">
+        </div>
+      </div>
+
+      <!-- xAI -->
+      <div style="margin-bottom:0.75rem;">
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--g3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">xAI</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+          <label class="model-check-btn" id="mcb-grok">
+            <input type="checkbox" id="mc-grok" value="grok-4-3" onchange="updateModelSelection()">
+            🌐 Grok 4.3 <span class="model-cost">~$0.04</span>
+          </label>
+          <input type="password" id="key-xai" class="model-key-input" placeholder="xAI API key (xai-...)">
+        </div>
+      </div>
+
+      <div id="model-selection-summary" style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);padding:0.4rem 0.7rem;background:rgba(255,255,255,0.03);border-radius:7px;">
+        1 model selected · Claude Sonnet 4.5
+      </div>
     </div>
-    <p class="api-note">Key saved automatically · <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Sonnet = fast screening · Opus = high-conviction deep analysis</p>
+    <div style="margin-top:0.85rem;padding-top:0.85rem;border-top:1px solid rgba(255,255,255,0.07);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+        <span style="font-family:var(--mono);font-size:0.72rem;color:var(--gold);">📈 Finnhub API Key</span>
+        <span style="font-family:var(--mono);font-size:0.65rem;color:var(--g3);">— free real-time stock prices (no Claude cost)</span>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <input type="password" class="api-input" id="finnhub-key" placeholder="your_finnhub_key" style="flex:1;min-width:180px;">
+        <button onclick="testFinnhub()" style="background:rgba(39,174,96,0.12);border:1px solid rgba(39,174,96,0.25);color:var(--green);padding:0.55rem 0.9rem;border-radius:8px;font-family:var(--mono);font-size:0.72rem;cursor:pointer;white-space:nowrap;">Test</button>
+      </div>
+      <p class="api-note" style="margin-top:0.4rem;">Free at <a href="https://finnhub.io" target="_blank">finnhub.io</a> · real-time US stocks · auto-fills price when you enter a ticker · no Claude API cost</p>
+      <div id="finnhub-status" style="font-family:var(--mono);font-size:0.7rem;margin-top:0.35rem;"></div>
+    </div>
   </div>
 
   <!-- PORTFOLIO CONTEXT (shared) -->
@@ -344,13 +519,25 @@ input:checked+.slider:before{transform:translateX(20px);}
   <!-- MARKET DATA -->
   <div class="panel">
     <h3>📡 Market Data</h3>
-    <div class="toggle-row">
-      <label class="switch"><input type="checkbox" id="web-search-toggle" onchange="toggleWebSearch()"><span class="slider"></span></label>
-      <div>
-        <div class="toggle-label">Web Search <span id="ws-status" style="color:var(--g3)">OFF</span></div>
-        <div class="toggle-sublabel">ON = Claude fetches live data (~$0.03/run) · OFF = enter manually (free)</div>
+    <div style="margin-bottom:0.85rem;">
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--gold);margin-bottom:0.5rem;">DATA SOURCE <span style="color:var(--g3);font-weight:400;font-size:0.62rem;">— one model fetches live data, all others analyze</span></div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+        <button class="data-src-btn active" id="ds-manual" onclick="setDataSource('manual',this)">
+          ✏️ Manual Entry <span style="opacity:0.6;font-size:0.65rem;">free</span>
+        </button>
+        <button class="data-src-btn" id="ds-claude" onclick="setDataSource('claude',this)">
+          ⚡ Claude Sonnet <span style="opacity:0.6;font-size:0.65rem;">~$0.03</span>
+        </button>
+        <button class="data-src-btn" id="ds-gemini" onclick="setDataSource('gemini',this)">
+          ✨ Gemini 2.5 Pro <span style="opacity:0.6;font-size:0.65rem;">~$0.10 · best search</span>
+        </button>
+      </div>
+      <div id="ds-status" style="font-family:var(--mono);font-size:0.68rem;color:var(--g3);line-height:1.5;">
+        Manual entry — enter stock data below · analysis models use web search OFF
       </div>
     </div>
+    <!-- Hidden checkbox kept for backward compat with toggleWebSearch() -->
+    <input type="checkbox" id="web-search-toggle" style="display:none" onchange="toggleWebSearch()">
     <div class="grid2" style="margin-bottom:0.75rem;">
       <div class="field-group">
         <label class="field-label">Ticker Symbol</label>
@@ -375,8 +562,23 @@ input:checked+.slider:before{transform:translateX(20px);}
       <div class="grid4" style="margin-bottom:0.65rem;">
         <div class="field-group"><label class="field-label">Days to Earnings</label><input class="ti" id="d-dte" placeholder="45"></div>
         <div class="field-group"><label class="field-label">FCF Yield %</label><input class="ti" id="d-fcf" placeholder="3.2"></div>
-        <div class="field-group"><label class="field-label">SPAXX Yield %</label><input class="ti" id="d-spaxx" placeholder="4.52"></div>
+        <div class="field-group">
+          <label class="field-label">SPAXX Yield % <span id="spaxx-status" style="font-size:0.6rem;color:var(--g3);font-weight:400;">fetching…</span></label>
+          <input class="ti" id="d-spaxx" placeholder="4.52" title="Auto-fetched from Treasury data · edit to override" oninput="this.dataset.autoFilled='false';this.style.color='#fff';">
+        </div>
         <div class="field-group"><label class="field-label">IV Rank %</label><input class="ti" id="d-ivrank" placeholder="55"></div>
+      </div>
+      <div class="grid4" style="margin-bottom:0.65rem;">
+        <div class="field-group"><label class="field-label">Open Interest</label><input class="ti" id="d-oi" placeholder="500" title="Contracts at this strike — min 250 for Protocol v3.5"></div>
+        <div class="field-group"><label class="field-label">30d Realized Vol %</label><input class="ti" id="d-rv30" placeholder="28" title="30-day realized volatility — used for IV/RV regime modifier"></div>
+        <div class="field-group"><label class="field-label">30d IV %</label><input class="ti" id="d-iv30" placeholder="42" title="30-day implied vol — used for IV/RV regime modifier (can use same as IV above)"></div>
+        <div class="field-group"><label class="field-label">10d Realized Vol %</label><input class="ti" id="d-rv10" placeholder="32" title="10-day realized vol — if RV10 > RV30, volatility is expanding (bearish for theta)"></div>
+      </div>
+      <div class="grid4" style="margin-bottom:0.65rem;">
+        <div class="field-group"><label class="field-label">Bid/Ask Spread %</label><input class="ti" id="d-bidask" placeholder="3.5" title="(Ask - Bid) / Mid × 100 — must be ≤ 8% to pass gate"></div>
+        <div class="field-group"><label class="field-label">52-Week High</label><input class="ti" id="d-52hi" placeholder="320.00"></div>
+        <div class="field-group"><label class="field-label">52-Week Low</label><input class="ti" id="d-52lo" placeholder="180.00"></div>
+        <div class="field-group"><label class="field-label">Forward P/E</label><input class="ti" id="d-fpe" placeholder="22.5"></div>
       </div>
       <div class="field-group" style="margin-bottom:0.65rem;">
         <label class="field-label">Additional Context</label>
@@ -384,6 +586,62 @@ input:checked+.slider:before{transform:translateX(20px);}
       </div>
       <button class="calc-greeks-btn" onclick="prefillGreeks()">⚡ Pre-calculate Greeks from my data</button>
       <div id="greeks-preview" style="display:none;margin-top:0.65rem;font-family:var(--mono);font-size:0.72rem;color:var(--g3);background:rgba(31,111,235,0.08);border:1px solid rgba(31,111,235,0.15);border-radius:7px;padding:0.65rem 0.85rem;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- TRADE HISTORY -->
+  <div class="history-panel" id="history-panel">
+    <div class="history-header" onclick="toggleHistory()">
+      <h3>📋 Trade History <span id="history-count-badge" style="font-family:var(--mono);font-size:0.68rem;color:var(--g3);font-weight:400;">(7 days)</span></h3>
+      <span class="toggle-arrow" id="history-arrow">▼</span>
+    </div>
+    <div class="history-body" id="history-body">
+      <div class="history-controls">
+        <input type="text" class="history-search" id="history-search" placeholder="Search ticker, type, verdict…" oninput="renderHistoryTable()">
+        <select class="history-sort" id="history-sort-col" onchange="renderHistoryTable()">
+          <option value="date">Sort: Date</option>
+          <option value="ticker">Sort: Ticker</option>
+          <option value="expiry">Sort: Expiry</option>
+          <option value="strike">Sort: Strike</option>
+          <option value="premium">Sort: Premium</option>
+          <option value="score">Sort: Score</option>
+          <option value="verdict">Sort: Verdict</option>
+          <option value="blended">Sort: Return</option>
+          <option value="pop">Sort: PoP</option>
+        </select>
+        <select class="history-sort" id="history-sort-dir" onchange="renderHistoryTable()">
+          <option value="desc">↓ Desc</option>
+          <option value="asc">↑ Asc</option>
+        </select>
+        <button class="history-load-btn" id="history-load-btn" onclick="loadSelectedToEvaluator()">
+          ⚡ Load Selected for Web Analysis
+        </button>
+        <button class="history-clear-btn" onclick="clearHistory()">Clear All</button>
+      </div>
+      <div class="history-table-wrap">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th style="width:32px;"></th>
+              <th onclick="sortHistory('ticker')">Ticker</th>
+              <th onclick="sortHistory('type')">Type</th>
+              <th onclick="sortHistory('expiry')">Expiry</th>
+              <th onclick="sortHistory('strike')">Strike</th>
+              <th onclick="sortHistory('premium')">Premium</th>
+              <th onclick="sortHistory('score')">Score</th>
+              <th onclick="sortHistory('verdict')">Verdict</th>
+              <th onclick="sortHistory('blended')">Return</th>
+              <th onclick="sortHistory('pop')">PoP</th>
+              <th onclick="sortHistory('date')">Date/Time</th>
+              <th>Model</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody"></tbody>
+        </table>
+      </div>
+      <div id="history-empty" class="history-empty" style="display:none;">
+        No trade history yet. Run your first analysis to start building your history.
+      </div>
     </div>
   </div>
 
@@ -410,6 +668,18 @@ input:checked+.slider:before{transform:translateX(20px);}
   <div class="comparison-bar" id="comparison-bar">
     <h3>📊 Trade Comparison</h3>
     <div style="overflow-x:auto;"><table class="comp-table" id="comp-table"></table></div>
+    <button class="synthesize-btn" id="synthesize-btn" onclick="runSynthesis()">
+      🏰 Synthesize All Models → Claude Opus Final Verdict
+    </button>
+  </div>
+
+  <!-- SYNTHESIS CARD -->
+  <div class="synthesis-card" id="synthesis-card">
+    <div class="synthesis-banner">
+      <div class="synthesis-title">🏰 Fortress Synthesis — Claude Opus Final Verdict</div>
+      <div class="synthesis-subtitle" id="synthesis-subtitle">Synthesizing all model analyses…</div>
+    </div>
+    <div class="card-body" id="synthesis-body"></div>
   </div>
 
   <!-- CARDS -->
@@ -538,14 +808,93 @@ let portfolioContext=null;
 let tradeCount=0;
 let stockCache={};
 const CACHE_TTL=15*60*1000;
-let selectedModel='claude-sonnet-4-5';
+let lastRunResults=[];
+let currentDataSource='manual'; // 'manual' | 'claude' | 'gemini'
+let fetchedDataSnapshot=null;   // shared data from the data-pull model
 
-function setModel(model, btn){
-  selectedModel=model;
-  document.querySelectorAll('.model-btn').forEach(b=>b.classList.remove('active','opus'));
+// Model registry
+const MODELS = {
+  'claude-sonnet-4-5': { name:'Claude Sonnet 4.5', provider:'anthropic', badge:'mb-claude', icon:'⚡' },
+  'claude-opus-4-5':   { name:'Claude Opus 4.5',   provider:'anthropic', badge:'mb-claude', icon:'🧠' },
+  'gpt-5':             { name:'GPT-5.5',            provider:'openai',    badge:'mb-openai', icon:'🤖' },
+  'gemini-2.5-pro':    { name:'Gemini 2.5 Pro',     provider:'google',    badge:'mb-google', icon:'✨' },
+  'grok-4-3':          { name:'Grok 4.3',           provider:'xai',       badge:'mb-xai',    icon:'🌐' },
+};
+
+function getSelectedModels(){
+  const selected=[];
+  Object.keys(MODELS).forEach(modelId=>{
+    const cbId='mc-'+modelId.replace(/[.-]/g,'').replace('claudesonnet45','sonnet').replace('claudeopus45','opus').replace('gpt5','gpt5').replace('gemini25pro','gemini').replace('grok43','grok');
+    // Map model IDs to checkbox IDs
+    const checkboxMap={
+      'claude-sonnet-4-5':'mc-sonnet',
+      'claude-opus-4-5':'mc-opus',
+      'gpt-5':'mc-gpt5',
+      'gemini-2.5-pro':'mc-gemini',
+      'grok-4-3':'mc-grok'
+    };
+    const cb=document.getElementById(checkboxMap[modelId]);
+    if(cb&&cb.checked) selected.push(modelId);
+  });
+  return selected;
+}
+
+function getApiKeyForModel(modelId){
+  const provider=MODELS[modelId]?.provider;
+  if(provider==='anthropic') return document.getElementById('api-key')?.value.trim()||'';
+  if(provider==='openai')    return document.getElementById('key-openai')?.value.trim()||localStorage.getItem('fortress_openai_key')||'';
+  if(provider==='google')    return document.getElementById('key-google')?.value.trim()||localStorage.getItem('fortress_google_key')||'';
+  if(provider==='xai')       return document.getElementById('key-xai')?.value.trim()||localStorage.getItem('fortress_xai_key')||'';
+  return '';
+}
+
+function setDataSource(src, btn){
+  currentDataSource = src;
+  fetchedDataSnapshot = null; // reset cached snapshot when source changes
+  document.querySelectorAll('.data-src-btn').forEach(b=>{
+    b.classList.remove('active','gemini');
+  });
   btn.classList.add('active');
-  if(model.includes('opus')) btn.classList.add('opus');
-  localStorage.setItem('fortress_model', model);
+  if(src==='gemini') btn.classList.add('gemini');
+
+  const statusEl = document.getElementById('ds-status');
+  const manualForm = document.getElementById('manual-form');
+
+  if(src==='manual'){
+    if(manualForm) manualForm.classList.add('show');
+    if(statusEl) statusEl.textContent='Manual entry — enter stock data below · analysis models use web search OFF';
+    document.getElementById('web-search-toggle').checked=false;
+  } else if(src==='claude'){
+    if(manualForm) manualForm.classList.remove('show');
+    if(statusEl) statusEl.textContent='Claude Sonnet will fetch live price, MAs, earnings, news (~$0.03 one-time) · all analysis models receive the same verified data';
+    document.getElementById('web-search-toggle').checked=true;
+  } else if(src==='gemini'){
+    if(manualForm) manualForm.classList.remove('show');
+    const gemKey=localStorage.getItem('fortress_google_key')||'';
+    if(!gemKey){
+      if(statusEl) statusEl.innerHTML='<span style="color:#e74c3c;">⚠️ Enter Google AI Studio key above to use Gemini data pull</span>';
+    } else {
+      if(statusEl) statusEl.textContent='Gemini 2.5 Pro will fetch live data (~$0.10 one-time) · best real-time search · all analysis models receive the same verified data';
+    }
+    document.getElementById('web-search-toggle').checked=true;
+  }
+}
+
+function updateModelSelection(){
+  const selected=getSelectedModels();
+  const names=selected.map(m=>MODELS[m]?.name||m);
+  const summary=document.getElementById('model-selection-summary');
+  if(summary){
+    summary.textContent=`${selected.length} model${selected.length!==1?'s':''} selected · ${names.join(' + ')}`;
+    summary.style.color=selected.length>0?'var(--g1)':'#e74c3c';
+  }
+  // Save third-party keys to localStorage
+  const oi=document.getElementById('key-openai')?.value.trim();
+  const gk=document.getElementById('key-google')?.value.trim();
+  const xk=document.getElementById('key-xai')?.value.trim();
+  if(oi) localStorage.setItem('fortress_openai_key',oi);
+  if(gk) localStorage.setItem('fortress_google_key',gk);
+  if(xk) localStorage.setItem('fortress_xai_key',xk);
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
@@ -563,10 +912,31 @@ window.addEventListener('DOMContentLoaded',()=>{
       ob.classList.add('active','opus');
     }
   }
+  const savedFinnhub=localStorage.getItem('fortress_finnhub_key');
+  if(savedFinnhub) document.getElementById('finnhub-key').value=savedFinnhub;
+  document.getElementById('finnhub-key').addEventListener('input',e=>{
+    localStorage.setItem('fortress_finnhub_key',e.target.value.trim());
+  });
+  // Load saved third-party API keys
+  const savedOAI=localStorage.getItem('fortress_openai_key');
+  const savedGGL=localStorage.getItem('fortress_google_key');
+  const savedXAI=localStorage.getItem('fortress_xai_key');
+  if(savedOAI) document.getElementById('key-openai').value=savedOAI;
+  if(savedGGL) document.getElementById('key-google').value=savedGGL;
+  if(savedXAI) document.getElementById('key-xai').value=savedXAI;
+  // Save keys on input
+  document.getElementById('key-openai').addEventListener('input',e=>{ localStorage.setItem('fortress_openai_key',e.target.value.trim()); updateModelSelection(); });
+  document.getElementById('key-google').addEventListener('input',e=>{ localStorage.setItem('fortress_google_key',e.target.value.trim()); updateModelSelection(); });
+  document.getElementById('key-xai').addEventListener('input',e=>{ localStorage.setItem('fortress_xai_key',e.target.value.trim()); updateModelSelection(); });
+  updateModelSelection();
   document.getElementById('ft-csv-upload').addEventListener('change',e=>{
     if(e.target.files[0]) loadFtPortfolioCSV(e.target.files[0]);
   });
   addTrade();
+  // Auto-fetch SPAXX yield on load (cached 24h)
+  fetchSpaxxYield();
+  // Initialize history
+  refreshHistoryBadge();
 });
 
 function getApiKey(){return document.getElementById('api-key').value.trim();}
@@ -580,6 +950,14 @@ function toggleWebSearch(){
 
 function onTickerChange(){
   const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
+  // Reset shared data snapshot when ticker changes
+  if(fetchedDataSnapshot && fetchedDataSnapshot.ticker !== ticker){
+    fetchedDataSnapshot=null;
+    const dsStatus=document.getElementById('ds-status');
+    if(dsStatus && currentDataSource!=='manual'){
+      dsStatus.textContent=`Ready to fetch live data for ${ticker}`;
+    }
+  }
   if(!ticker){document.getElementById('cache-status').textContent='No data cached';return;}
   const cached=stockCache[ticker];
   if(cached){
@@ -589,7 +967,14 @@ function onTickerChange(){
       return;
     }
   }
-  renderMemoryBadge(ticker);
+  // Auto-fetch price from Finnhub if key exists and web search is off
+  const webOn=document.getElementById('web-search-toggle').checked;
+  if(!webOn && getFinnhubKey() && ticker.length>=1){
+    clearTimeout(window._tickerDebounce);
+    window._tickerDebounce=setTimeout(()=>autoFillPrice(),600);
+  } else {
+    renderMemoryBadge(ticker);
+  }
 }
 
 function normalCDF(x){
@@ -631,7 +1016,8 @@ function prefillGreeks(){
     return;
   }
   const T=Math.max((new Date(expVal)-new Date())/(365*24*3600*1000),0);
-  const g=bsGreeks(S,K,T,0.045,iv/100,true);
+  const spaxxRate = parseFloat(document.getElementById('d-spaxx')?.value)||0;
+  const g=bsGreeks(S,K,T, spaxxRate>0 ? spaxxRate/100 : 0.045 ,iv/100,true);
   const pop=((1-Math.abs(g.delta))*100).toFixed(1);
   document.getElementById('greeks-preview').style.display='block';
   document.getElementById('greeks-preview').innerHTML=`<strong style="color:#5ba3f5">Calculated Greeks (Black-Scholes)</strong><br>Delta: ${g.delta} · Gamma: ${g.gamma} · Theta: +$${Math.abs(g.theta*100).toFixed(2)}/day · Vega: ${g.vega}<br>PoP: ~${pop}% · DTE: ${(T*365).toFixed(0)} days`;
@@ -726,9 +1112,127 @@ function getTradeType(row){
   if(t.includes('spread')) return 'spread';if(t.includes('call')) return 'cc';if(t.includes('other')) return 'other';return 'csp';
 }
 
+// ── SINGLE DATA PULL ──────────────────────────────────────────────────────────
+async function pullLiveData(ticker, trade, dataModelId, dataApiKey){
+  // If we already fetched this session, reuse it
+  if(fetchedDataSnapshot && fetchedDataSnapshot.ticker===ticker){
+    return fetchedDataSnapshot;
+  }
+
+  const today=new Date();
+  const todayStr=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const price=document.getElementById('d-price')?.value.trim()||'';
+
+  const dataPullPrompt=`You are a financial data retrieval engine. Your ONLY job is to fetch and return verified live market data for ${ticker}. Do NOT analyze the trade. Do NOT provide recommendations. ONLY return data.
+
+TODAY: ${todayStr}
+
+USE WEB SEARCH to find ALL of the following for ${ticker}:
+1. Current stock price (live/real-time)
+2. 50-day moving average
+3. 200-day moving average
+4. Next earnings date and days until earnings
+5. IV Rank or implied volatility environment (approximate)
+6. FCF yield or free cash flow context
+7. Current SPAXX / 4-week T-bill yield
+8. 1-3 recent notable news headlines (last 7 days only)
+9. 52-week high and low
+10. Forward P/E if available
+
+Return ONLY this JSON — no markdown, no text outside JSON:
+{"ticker":"${ticker}","fetchDate":"${todayStr}","underlying":0,"ma50":0,"ma200":0,"daysToEarnings":0,"earningsDate":"","ivRank":"","fcfYield":"","spaxYield":"","recentNews":"brief 1-3 bullet summary","week52High":0,"week52Low":0,"forwardPE":"","dataConfidence":"High/Medium/Low","priceSource":"source name"}`;
+
+  const body={messages:[{role:'user',content:dataPullPrompt}],max_tokens:1000};
+  const raw=await callModelAPI(dataModelId, dataApiKey, body, true);
+  const clean=raw.replace(/```json
+?/g,'').replace(/```
+?/g,'').trim();
+  const js=clean.indexOf('{'),je=clean.lastIndexOf('}');
+  if(js===-1||je===-1) throw new Error('Data pull returned no JSON');
+  const snap=JSON.parse(clean.slice(js,je+1));
+  snap.ticker=ticker;
+  fetchedDataSnapshot=snap;
+
+  // Auto-fill manual fields with fetched data
+  if(snap.underlying>0) { const el=document.getElementById('d-price'); if(el){el.value=snap.underlying.toFixed(2);el.style.color='#5ba3f5';} }
+  if(snap.ma50>0)    { const el=document.getElementById('d-ma50');  if(el) el.value=snap.ma50; }
+  if(snap.ma200>0)   { const el=document.getElementById('d-ma200'); if(el) el.value=snap.ma200; }
+  if(snap.spaxYield) { const el=document.getElementById('d-spaxx'); if(el&&el.dataset.autoFilled!=='false') el.value=parseFloat(snap.spaxYield)||el.value; }
+
+  return snap;
+}
+
+async function callModelAPI(modelId, apiKey, body, webSearchOn){
+  const provider = MODELS[modelId]?.provider || 'anthropic';
+
+  if(provider === 'anthropic'){
+    const tools = webSearchOn ? [{type:'web_search_20250305',name:'web_search'}] : [];
+    const reqBody = {...body, model:modelId};
+    if(tools.length) reqBody.tools = tools;
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify(reqBody)
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Anthropic error ${res.status}`);}
+    const data=await res.json();
+    let raw='';for(const block of data.content){if(block.type==='text') raw+=block.text;}
+    return raw;
+  }
+
+  if(provider === 'openai'){
+    const reqBody={model:modelId==='gpt-5'?'gpt-5-2025-08-07':modelId,max_tokens:4000,messages:[{role:'user',content:body.messages[0].content}]};
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify(reqBody)
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`OpenAI error ${res.status}`);}
+    const data=await res.json();
+    return data.choices?.[0]?.message?.content||'';
+  }
+
+  if(provider === 'google'){
+    const modelName = 'gemini-2.5-pro-preview-05-06';
+    const reqBody={contents:[{role:'user',parts:[{text:body.messages[0].content}]}],generationConfig:{maxOutputTokens:4000}};
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(reqBody)
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Google error ${res.status}`);}
+    const data=await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  }
+
+  if(provider === 'xai'){
+    const reqBody={model:'grok-4',max_tokens:4000,messages:[{role:'user',content:body.messages[0].content}]};
+    const res=await fetch('https://api.x.ai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify(reqBody)
+    });
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`xAI error ${res.status}`);}
+    const data=await res.json();
+    return data.choices?.[0]?.message?.content||'';
+  }
+
+  throw new Error(`Unknown provider for model ${modelId}`);
+}
+
 async function runAll(){
-  const apiKey=getApiKey();
-  if(!apiKey){showFtError('Please enter your Claude API key.');return;}
+  const claudeKey=getApiKey();
+  if(!claudeKey){showFtError('Please enter your Claude API key.');return;}
+  const selectedModels=getSelectedModels();
+  if(!selectedModels.length){showFtError('Please select at least one model.');return;}
+  // Validate third-party keys
+  for(const modelId of selectedModels){
+    const provider=MODELS[modelId]?.provider;
+    if(provider!=='anthropic'){
+      const key=getApiKeyForModel(modelId);
+      if(!key){showFtError(`Please enter an API key for ${MODELS[modelId]?.name}.`);return;}
+    }
+  }
   const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
   if(!ticker){showFtError('Please enter a ticker symbol.');return;}
   const rows=document.querySelectorAll('.trade-row');
@@ -757,21 +1261,80 @@ async function runAll(){
   document.getElementById('cards-container').innerHTML='';
   document.getElementById('loading-card').classList.add('show');
   document.getElementById('run-btn').disabled=true;
-  const webSearchOn=document.getElementById('web-search-toggle').checked;
+  const webSearchOn = currentDataSource !== 'manual';
   const results=[];
+  lastRunResults=[];
+  fetchedDataSnapshot=null; // reset for fresh run
+
+  // ── STEP 1: SINGLE DATA PULL (if not manual) ──────────────────────────────
+  let sharedDataSnapshot=null;
+  if(currentDataSource !== 'manual'){
+    const dataModelId = currentDataSource==='gemini' ? 'gemini-2.5-pro' : 'claude-sonnet-4-5';
+    const dataKey = getApiKeyForModel(dataModelId);
+    if(!dataKey){ showFtError(`API key required for ${currentDataSource==='gemini'?'Google':'Anthropic'} data pull.`); document.getElementById('loading-card').classList.remove('show'); document.getElementById('run-btn').disabled=false; return; }
+
+    document.getElementById('loading-title').textContent=
+      currentDataSource==='gemini'?'✨ Gemini fetching live data…':'⚡ Claude fetching live data…';
+    document.getElementById('loading-step').textContent=
+      `Pulling price, MAs, earnings, news for ${ticker} — shared across all models`;
+    document.getElementById('progress-fill').style.width='8%';
+
+    try{
+      sharedDataSnapshot = await pullLiveData(ticker, trades[0]||{}, dataModelId, dataKey);
+      document.getElementById('ds-status').innerHTML=
+        `<span style="color:var(--green);">✅ Live data fetched · ${ticker} $${sharedDataSnapshot.underlying} · ${sharedDataSnapshot.dataConfidence||''} confidence · shared with all ${selectedModels.length} models</span>`;
+    } catch(e){
+      document.getElementById('ds-status').innerHTML=
+        `<span style="color:#e74c3c;">⚠️ Data pull failed (${e.message}) — falling back to manual data</span>`;
+      sharedDataSnapshot=null;
+    }
+  }
+
+  const totalOps=trades.length*selectedModels.length;
+  let opsDone=0;
+
   for(let i=0;i<trades.length;i++){
     const trade=trades[i];
-    const pct=Math.round(((i+0.5)/trades.length)*100);
-    document.getElementById('loading-title').textContent=`Analyzing Trade ${i+1} of ${trades.length}…`;
-    document.getElementById('progress-fill').style.width=pct+'%';
-    document.getElementById('loading-step').textContent=webSearchOn?`Fetching live data for ${ticker}…`:`Building Fortress analysis…`;
-    try{const card=await analyzeTrade(ticker,trade,webSearchOn,apiKey);results.push({trade,card});renderCard(card,i+1,trades.length);}
-    catch(e){results.push({trade,card:null,error:e.message});renderErrorCard(trade,i+1,e.message);}
+    const tradeResults=[];
+    for(let mi=0;mi<selectedModels.length;mi++){
+      const modelId=selectedModels[mi];
+      const modelInfo=MODELS[modelId];
+      const modelKey=getApiKeyForModel(modelId);
+      opsDone++;
+      const pct=Math.round((opsDone/totalOps)*100);
+      document.getElementById('loading-title').textContent=`Trade ${i+1}/${trades.length} · ${modelInfo.icon} ${modelInfo.name}…`;
+      document.getElementById('progress-fill').style.width=pct+'%';
+      document.getElementById('loading-step').textContent=
+        sharedDataSnapshot
+          ? `Analyzing with pre-verified data (${currentDataSource==='gemini'?'Gemini':'Claude'} fetched once)`
+          : `Running analysis…`;
+      try{
+        const card=await analyzeTrade(ticker,trade,false,modelKey,modelId,sharedDataSnapshot);
+        card._modelId=modelId;
+        card._modelInfo=modelInfo;
+        tradeResults.push({trade,card,modelId,modelInfo});
+        results.push({trade,card,modelId,modelInfo});
+        renderCard(card,i+1,trades.length,modelId,modelInfo);
+      } catch(e){
+        tradeResults.push({trade,card:null,modelId,modelInfo,error:e.message});
+        results.push({trade,card:null,modelId,modelInfo,error:e.message});
+        renderErrorCard(trade,i+1,e.message,modelInfo);
+      }
+    }
   }
+
   document.getElementById('progress-fill').style.width='100%';
   document.getElementById('loading-card').classList.remove('show');
   document.getElementById('run-btn').disabled=false;
-  if(results.length>1) renderComparison(results);
+
+  lastRunResults=results;
+  const validResults=results.filter(r=>r.card);
+  if(validResults.length>1){
+    renderComparison(results);
+    // Show synthesize button if 2+ models
+    const synthBtn=document.getElementById('synthesize-btn');
+    if(synthBtn) synthBtn.style.display='block';
+  }
 }
 
 // ── MEMORY SYSTEM ────────────────────────────────────────────────────────────
@@ -856,6 +1419,195 @@ function renderMemoryBadge(ticker) {
   }
 }
 
+// ── FINNHUB PRICE FETCH ──────────────────────────────────────────────────────
+function getFinnhubKey(){
+  return localStorage.getItem('fortress_finnhub_key')||'';
+}
+
+async function fetchFinnhubPrice(ticker){
+  const key=getFinnhubKey();
+  if(!key) return null;
+  try{
+    const res=await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${key}`);
+    if(!res.ok) return null;
+    const d=await res.json();
+    // c=current price, pc=prev close, h=high, l=low, o=open, t=timestamp
+    if(d.c && d.c>0) return {
+      price:d.c,
+      prevClose:d.pc,
+      high:d.h,
+      low:d.l,
+      open:d.o,
+      change:d.c-d.pc,
+      changePct:((d.c-d.pc)/d.pc*100).toFixed(2),
+      timestamp:d.t
+    };
+    return null;
+  } catch(e){ return null; }
+}
+
+async function autoFillPrice(){
+  const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
+  if(!ticker) return;
+  const key=getFinnhubKey();
+  if(!key){
+    // no key — just update cache status
+    onTickerChange();
+    return;
+  }
+  const priceEl=document.getElementById('d-price');
+  const statusEl=document.getElementById('cache-status');
+  statusEl.innerHTML=`<span style="color:var(--g3);font-family:var(--mono);font-size:0.72rem;">Fetching ${ticker} price…</span>`;
+  const data=await fetchFinnhubPrice(ticker);
+  if(data){
+    priceEl.value=data.price.toFixed(2);
+    const chgColor=data.change>=0?'var(--green)':'#e74c3c';
+    const chgSign=data.change>=0?'+':'';
+    statusEl.innerHTML=`<span class="cache-badge"><span class="cache-dot"></span>${ticker} $${data.price.toFixed(2)} <span style="color:${chgColor}">${chgSign}${data.changePct}%</span> · live</span>`;
+    renderMemoryBadge(ticker);
+    // Also fetch OI and RV if strike is entered
+    autoFillOptionsData(ticker, data.price);
+  } else {
+    statusEl.innerHTML=`<span style="color:#e74c3c;font-family:var(--mono);font-size:0.72rem;">Price fetch failed — enter manually</span>`;
+    onTickerChange();
+  }
+}
+
+async function autoFillOptionsData(ticker, price){
+  const key=getFinnhubKey();
+  if(!key) return;
+  // Fetch 30-day realized vol from Finnhub
+  try{
+    const res=await fetch(`https://finnhub.io/api/v1/stock/metric?symbol=${ticker}&metric=all&token=${key}`);
+    if(!res.ok) return;
+    const d=await res.json();
+    // Finnhub provides various vol metrics
+    const rv = d?.metric?.['52WeekPriceReturnDaily'] ? null : null; // RV not directly available
+    // Fetch IV from quote data instead
+    const iv30El=document.getElementById('d-iv30');
+    const rvEl=document.getElementById('d-rv30');
+    // Finnhub free tier doesn't give RV/IV30 directly — show hint
+    if(iv30El && !iv30El.value) iv30El.placeholder='enter from broker';
+    if(rvEl && !rvEl.value) rvEl.placeholder='enter from broker';
+  } catch(e){}
+}
+
+async function testFinnhub(){
+  const key=document.getElementById('finnhub-key').value.trim();
+  if(!key){
+    document.getElementById('finnhub-status').innerHTML='<span style="color:#e74c3c;">Enter a key first</span>';
+    return;
+  }
+  localStorage.setItem('fortress_finnhub_key',key);
+  document.getElementById('finnhub-status').innerHTML='<span style="color:var(--g3);">Testing…</span>';
+  try{
+    const res=await fetch(`https://finnhub.io/api/v1/quote?symbol=AAPL&token=${key}`);
+    const d=await res.json();
+    if(d.c && d.c>0){
+      document.getElementById('finnhub-status').innerHTML=`<span style="color:var(--green);">✅ Working — AAPL test: $${d.c.toFixed(2)}</span>`;
+    } else {
+      document.getElementById('finnhub-status').innerHTML='<span style="color:#e74c3c;">❌ Invalid key or no data returned</span>';
+    }
+  } catch(e){
+    document.getElementById('finnhub-status').innerHTML=`<span style="color:#e74c3c;">❌ Error: ${e.message}</span>`;
+  }
+}
+
+// ── AUTO SPAXX YIELD FETCH ──────────────────────────────────────────────────
+// Fetches 4-week Treasury bill yield as SPAXX proxy (tracks within ~0.1-0.2%)
+// Cached in localStorage for 24 hours — only changes weekly
+const SPAXX_CACHE_KEY = 'fortress_spaxx_cache';
+
+async function fetchSpaxxYield() {
+  // Check cache first (valid for 24 hours)
+  try {
+    const cached = JSON.parse(localStorage.getItem(SPAXX_CACHE_KEY) || 'null');
+    if (cached && (Date.now() - cached.timestamp) < 24 * 60 * 60 * 1000) {
+      applySpaxxYield(cached.yield, 'cached');
+      return;
+    }
+  } catch(e) {}
+
+  const key = getFinnhubKey();
+  if (!key) {
+    // No Finnhub key — try fetching from Treasury direct (no key needed)
+    fetchSpaxxFromTreasury();
+    return;
+  }
+
+  try {
+    // Finnhub bond yield curve — US 4-week Treasury bill
+    const res = await fetch(`https://finnhub.io/api/v1/bond/yield?code=US4W&token=${key}`);
+    if (res.ok) {
+      const d = await res.json();
+      if (d && d.y !== undefined) {
+        const yld = parseFloat((d.y * 100).toFixed(2));
+        cacheSpaxx(yld);
+        applySpaxxYield(yld, 'Finnhub 4W T-Bill');
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // Fallback: Treasury direct API (no key needed, public)
+  fetchSpaxxFromTreasury();
+}
+
+async function fetchSpaxxFromTreasury() {
+  try {
+    // FRED API - 4-week T-bill yield (public, no key needed for basic series)
+    const res = await fetch(
+      'https://api.stlouisfed.org/fred/series/observations?series_id=DTB4WK&sort_order=desc&limit=1&api_key=no&file_type=json',
+      { signal: AbortSignal.timeout(4000) }
+    );
+    // FRED requires key — use alternative: US Treasury FiscalData API (truly free)
+    const res2 = await fetch(
+      'https://api.fiscaldata.treasury.gov/services/api/v1/accounting/od/avg_interest_rates?fields=record_date,security_desc,avg_interest_rate_amt&filter=security_desc:eq:Treasury%20Bills&sort=-record_date&page[size]=5',
+      { signal: AbortSignal.timeout(4000) }
+    );
+    if (res2.ok) {
+      const d = await res2.json();
+      const bills = d?.data?.filter(r => r.security_desc === 'Treasury Bills');
+      if (bills && bills.length > 0) {
+        const yld = parseFloat(bills[0].avg_interest_rate_amt);
+        if (yld > 0) {
+          cacheSpaxx(yld);
+          applySpaxxYield(yld, 'US Treasury (T-Bills avg)');
+          return;
+        }
+      }
+    }
+  } catch(e) {}
+
+  // Last fallback: use stored value or 4.5% default
+  const stored = document.getElementById('d-spaxx')?.value;
+  if (!stored || stored === '') {
+    applySpaxxYield(4.5, 'default (4.50%)');
+  }
+}
+
+function cacheSpaxx(yld) {
+  try {
+    localStorage.setItem(SPAXX_CACHE_KEY, JSON.stringify({ yield: yld, timestamp: Date.now() }));
+  } catch(e) {}
+}
+
+function applySpaxxYield(yld, source) {
+  const el = document.getElementById('d-spaxx');
+  if (el && (!el.value || el.dataset.autoFilled === 'true')) {
+    el.value = yld.toFixed(2);
+    el.dataset.autoFilled = 'true';
+    el.style.color = '#5ba3f5'; // blue tint = auto-filled
+    el.title = `Auto-filled: ${source} · Updates every 24h · Edit to override`;
+  }
+  // Update status
+  const statusEl = document.getElementById('spaxx-status');
+  if (statusEl) {
+    statusEl.textContent = `${yld.toFixed(2)}% · ${source}`;
+    statusEl.style.color = 'var(--green)';
+  }
+}
+
 function clearTickerMemory(){
   const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
   if(!ticker) return;
@@ -867,7 +1619,7 @@ function clearTickerMemory(){
 }
 
 // ── PRE-CALCULATION ENGINE ───────────────────────────────────────────────────
-function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx) {
+function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx, manualOI, manualRV, manualIV30, manualRV10, manualBidAsk, manualDTE) {
   const S = parseFloat(manualPrice) || 0;
   const K = parseFloat(trade.strike) || 0;
   const premium = parseFloat(trade.premium) || 0;
@@ -903,7 +1655,8 @@ function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx) {
   // Greeks via Black-Scholes
   let greeks = {delta:0,gamma:0,theta:0,vega:0};
   if (S > 0 && manualIV) {
-    greeks = bsGreeks(S, K, dteYears, 0.045, parseFloat(manualIV)/100, true);
+  const riskFreeRate = spaxx > 0 ? spaxx / 100 : 0.045;
+  const greeks = bsGreeks(S, K, dteYears, riskFreeRate, parseFloat(manualIV)/100, true);
   }
   const pop = greeks.delta !== 0 ? ((1 - Math.abs(greeks.delta)) * 100).toFixed(1) : null;
 
@@ -919,15 +1672,221 @@ function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx) {
     ? portfolioContext.rawAvail - portfolioContext.rawWeightedNotional - additionalWtd
     : null;
 
+  // ── PROTOCOL v3.5: REGIME-AWARE STRUCTURAL EFFICIENCY ENGINE ───────────────
+  const absDelta = Math.abs(greeks.delta) || 0;
+  const blendedAnn = blendedAnnPct;
+
+  // Read OI and volatility inputs (passed via preCalcTrade params)
+  const oi    = parseFloat(manualOI)  || 0;
+  const rv30  = parseFloat(manualRV)  || 0;
+  const iv30  = parseFloat(manualIV30 || manualIV) || 0;  // fallback to IV if IV30 not provided
+
+  // ── HARD GATE CHECKS ────────────────────────────────────────────────────────
+  const gates = [];
+  let gatesPassed = true;
+
+  // Gate 1: Minimum premium floor $0.25/share
+  if (premium < 0.25) {
+    gates.push({ gate: 'Premium Floor', reason: `Premium $${premium.toFixed(2)} is below $0.25 minimum`, passed: false });
+    gatesPassed = false;
+  } else {
+    gates.push({ gate: 'Premium Floor', reason: `$${premium.toFixed(2)} ≥ $0.25 ✅`, passed: true });
+  }
+
+  // Gate 2: Open Interest ≥ 250
+  if (oi > 0 && oi < 250) {
+    gates.push({ gate: 'Open Interest', reason: `OI ${oi.toLocaleString()} is below 250 minimum (liquidity risk)`, passed: false });
+    gatesPassed = false;
+  } else if (oi === 0) {
+    gates.push({ gate: 'Open Interest', reason: 'OI not provided — enter for full gate check', passed: null });
+  } else {
+    gates.push({ gate: 'Open Interest', reason: `${oi.toLocaleString()} contracts ✅`, passed: true });
+  }
+
+  // Gate 3: |Delta| ≥ 0.08
+  if (absDelta > 0 && absDelta < 0.08) {
+    gates.push({ gate: 'Delta Minimum', reason: `|Δ| ${absDelta.toFixed(4)} is below 0.08 minimum (operationally useless premium)`, passed: false });
+    gatesPassed = false;
+  } else if (absDelta === 0) {
+    gates.push({ gate: 'Delta Minimum', reason: 'Delta not calculated — enter IV% to enable', passed: null });
+  } else {
+    gates.push({ gate: 'Delta Minimum', reason: `|Δ| ${absDelta.toFixed(4)} ≥ 0.08 ✅`, passed: true });
+  }
+
+  // Gate 4: Bid/Ask Spread ≤ 8%
+  const bidAskPct = parseFloat(manualBidAsk) || 0;
+  if (bidAskPct > 0 && bidAskPct > 8) {
+    gates.push({ gate: 'Bid/Ask Spread', reason: `${bidAskPct.toFixed(1)}% spread exceeds 8% max (execution edge destroyed)`, passed: false });
+    gatesPassed = false;
+  } else if (bidAskPct === 0) {
+    gates.push({ gate: 'Bid/Ask Spread', reason: 'Not provided — enter for full gate check', passed: null });
+  } else {
+    gates.push({ gate: 'Bid/Ask Spread', reason: `${bidAskPct.toFixed(1)}% ≤ 8% ✅`, passed: true });
+  }
+
+  // ── SCORING FUNCTIONS ───────────────────────────────────────────────────────
+  const scoreYPD = v => Math.min(100, v >= 80 ? Math.round(95 + Math.min(5,(v-80)/4)) :
+                        v >= 60 ? Math.round(80 + (v-60)/20*14) :
+                        v >= 45 ? Math.round(60 + (v-45)/15*19) :
+                        Math.round(Math.max(0, v/45*59)));
+
+  const scoreTPD = v => Math.min(100, v >= 3.5 ? Math.round(90 + Math.min(10,(v-3.5)/1.5*10)) :
+                        v >= 2.0 ? Math.round(75 + (v-2.0)/1.5*14) :
+                        v >= 1.0 ? Math.round(50 + (v-1.0)/1.0*24) :
+                        Math.round(Math.max(0, v/1.0*49)));
+
+  const scoreBPD = v => Math.min(100, v >= 150 ? Math.round(95 + Math.min(5,(v-150)/20*5)) :
+                        v >= 100 ? Math.round(80 + (v-100)/50*14) :
+                        v >= 60  ? Math.round(60 + (v-60)/40*19) :
+                        Math.round(Math.max(0, v/60*59)));
+
+  // ── METRIC CALCULATIONS ─────────────────────────────────────────────────────
+  // Metric I: Yield per Delta
+  const yieldPerDelta = absDelta > 0 ? blendedAnn / absDelta : 0;
+
+  // Metric II: Theta per Delta (Time-Normalized 30d baseline)
+  const thetaPerShare = Math.abs(greeks.theta) * 100;
+  const thetaPerDelta = absDelta > 0 ? (thetaPerShare / absDelta) * (dte / 30) : 0;
+
+  // Regime Modifier: IV30/RV30 panic skew detector
+  const ivRvRatio = rv30 > 0 && iv30 > 0 ? iv30 / rv30 : 0;
+  // Continuous regime modifier (replaces binary 1.15× cliff)
+  // Scales smoothly: 1.00 at IV/RV=1.0, up to max 1.30 at IV/RV≥1.60
+  const regimeModifier = ivRvRatio > 0
+    ? Math.min(1.30, 1 + Math.max(0, (ivRvRatio - 1.0) * 0.50))
+    : 1.00;
+  const regimeLabel = ivRvRatio > 1.40
+    ? `Panic Skew (IV/RV=${ivRvRatio.toFixed(2)}) → ${regimeModifier.toFixed(2)}× continuous expansion`
+    : ivRvRatio > 1.10
+    ? `Elevated IV (IV/RV=${ivRvRatio.toFixed(2)}) → ${regimeModifier.toFixed(2)}× mild expansion`
+    : ivRvRatio > 0
+    ? `Standard Regime (IV/RV=${ivRvRatio.toFixed(2)}) → ${regimeModifier.toFixed(2)}× modifier`
+    : 'IV/RV not provided — no regime adjustment';
+
+  // RV10 expanding volatility detection (RV10 > RV30 = vol accelerating)
+  const rv10Val = parseFloat(manualRV10) || 0;
+  const rv30Val = parseFloat(manualRV) || 0;
+  const expandingVol = rv10Val > 0 && rv30Val > 0 && rv10Val > rv30Val;
+  const expandingVolLabel = expandingVol
+    ? `⚠️ Expanding Vol (RV10=${rv10Val}% > RV30=${rv30Val}%) — theta score penalized`
+    : rv10Val > 0 && rv30Val > 0
+    ? `✅ Stable Vol (RV10=${rv10Val}% ≤ RV30=${rv30Val}%)`
+    : 'RV10/RV30 not provided';
+
+  // Event risk detection (earnings inside DTE)
+  const dteNum = dte;
+  const daysToEarnings = parseFloat(manualDTE) || 999;
+  const earningsInsideDTE = daysToEarnings < dteNum;
+  const earningsLabel = earningsInsideDTE
+    ? `⚠️ Earnings in ${daysToEarnings}d — inside ${dteNum}d DTE (theta cap + buffer reduction applied)`
+    : daysToEarnings < 999
+    ? `✅ Earnings in ${daysToEarnings}d — outside trade window`
+    : 'Earnings date not provided';
+
+  // Metric III: Buffer per Delta (Regime-Aware)
+  const bufferPerDeltaRaw = absDelta > 0 ? bufferToStrike / absDelta : 0;
+  const bufferPerDelta = bufferPerDeltaRaw * regimeModifier;
+
+  // ── GAMMA CONVEXITY RISK SCORE ─────────────────────────────────────────────
+  const gammaVal = Math.abs(greeks.gamma) || 0;
+  const thetaVal = Math.abs(greeks.theta) || 0;
+  const gammaThetaRatio = thetaVal > 0 ? gammaVal / thetaVal : 0;
+  let convexityRisk = 0;
+  if (gammaVal > 0 && thetaVal > 0) {
+    const baseRisk = Math.min(100, gammaThetaRatio * 1000);
+    const dteMultiplier = dte<=7?3.0:dte<=14?2.0:dte<=21?1.5:dte<=30?1.2:1.0;
+    const volMultiplier = expandingVol ? 1.25 : 1.0;
+    convexityRisk = Math.min(100, Math.round(baseRisk * dteMultiplier * volMultiplier));
+  }
+  const convexityLabel = convexityRisk>=75?'🔴 CRITICAL — gamma acceleration imminent':
+                         convexityRisk>=50?'🟠 ELEVATED — monitor closely near expiry':
+                         convexityRisk>=25?'🟡 MODERATE — manageable with active monitoring':
+                         convexityRisk>0  ?'🟢 LOW — theta decay dominates gamma risk':
+                         'N/A — enter IV% to enable';
+  const gammaDTEWarning = dte <= 14 && absDelta > 0;
+
+  // ── EXPECTED VALUE ENGINE ────────────────────────────────────────────────────
+  const popDecimal = absDelta > 0 ? (1 - absDelta) : 0.5;
+  const poaDecimal = 1 - popDecimal;
+  const avgProfit = premiumCollected;
+  const expectedAssignedPrice = K * 0.85; // conservative: 15% drop from strike
+  const expectedAssignmentLoss = Math.max(0, (effectiveEntry - expectedAssignedPrice) * contracts * 100);
+  const expectedValue = (popDecimal * avgProfit) - (poaDecimal * expectedAssignmentLoss);
+  const evPerDollarRisked = cashSecured > 0 ? expectedValue / cashSecured * 100 : 0;
+  const evLabel = expectedValue > 0
+    ? `+$${Math.round(expectedValue).toLocaleString()} positive EV (${evPerDollarRisked.toFixed(2)}% of capital at risk)`
+    : `($${Math.abs(Math.round(expectedValue)).toLocaleString()}) negative EV — risk exceeds probability-weighted reward`;
+
+  // Base scores
+  let ypd_score = absDelta > 0 ? scoreYPD(yieldPerDelta) : 0;
+  let tpd_score = absDelta > 0 ? scoreTPD(thetaPerDelta) : 0;
+  let bpd_score = absDelta > 0 ? scoreBPD(bufferPerDelta) : 0;
+
+  // EVENT RISK OVERLAY: earnings inside DTE
+  if (earningsInsideDTE) {
+    tpd_score = Math.min(tpd_score, 85);          // theta cap at 85
+    bpd_score = Math.round(bpd_score * 0.90);      // buffer reduced 10%
+  }
+
+  // EXPANDING VOL OVERLAY: RV10 > RV30 (vol accelerating — penalize theta)
+  if (expandingVol) {
+    const penalty = Math.round(tpd_score * 0.075); // 5-10% penalty
+    tpd_score = Math.max(0, tpd_score - penalty);
+  }
+
+  // LOW-DELTA DISTORTION: cap yield/delta at 70 if any gate failed
+  if (!gatesPassed) {
+    ypd_score = Math.min(ypd_score, 70);
+  }
+
+  // Composite: 40% Yield/Delta, 35% Theta/Delta, 25% Buffer/Delta
+  const compositeScore = Math.min(100, Math.round(ypd_score*0.40 + tpd_score*0.35 + bpd_score*0.25));
+
+  // Structural Classification label
+  const structuralLabel = compositeScore >= 90 ? 'Elite' :
+                          compositeScore >= 75 ? 'Strong' :
+                          compositeScore >= 60 ? 'Acceptable' :
+                          compositeScore >= 45 ? 'Aggressive' : 'Inefficient';
+
+  const protocol = {
+    version: '3.5',
+    gatesPassed,
+    gates,
+    yieldPerDelta:     parseFloat(yieldPerDelta.toFixed(2)),
+    thetaPerDelta:     parseFloat(thetaPerDelta.toFixed(2)),
+    bufferPerDeltaRaw: parseFloat(bufferPerDeltaRaw.toFixed(2)),
+    bufferPerDelta:    parseFloat(bufferPerDelta.toFixed(2)),
+    regimeModifier,
+    regimeLabel,
+    ivRvRatio:         parseFloat(ivRvRatio.toFixed(3)),
+    expandingVol,
+    expandingVolLabel,
+    earningsInsideDTE,
+    earningsLabel,
+    ypd_score, tpd_score, bpd_score, compositeScore,
+    structuralLabel,
+    // Gamma convexity
+    convexityRisk,
+    convexityLabel,
+    gammaThetaRatio:   parseFloat(gammaThetaRatio.toFixed(4)),
+    gammaDTEWarning,
+    // Expected Value
+    expectedValue:     parseFloat(expectedValue.toFixed(2)),
+    evPerDollarRisked: parseFloat(evPerDollarRisked.toFixed(3)),
+    evLabel,
+    hasData: absDelta > 0
+  };
+
   return {
     dte, dteYears, effectiveEntry, bufferToStrike, bufferToEffEntry,
     cashSecured, premiumCollected, premiumYieldPct, annualizedPct,
     spaxxContribPct, totalReturnPct, blendedAnnPct, maxLoss, breakEven,
-    greeks, pop, additionalNotional, additionalWtd, newBuffer, contracts, spaxx
+    greeks, pop, additionalNotional, additionalWtd, newBuffer, contracts, spaxx,
+    protocol
   };
 }
 
-async function analyzeTrade(ticker, trade, webSearchOn, apiKey) {
+async function analyzeTrade(ticker, trade, webSearchOn, apiKey, modelId='claude-sonnet-4-5', sharedSnap=null) {
   // ── Today's date ──────────────────────────────────────────────────────────
   const today = new Date();
   const todayStr = today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
@@ -944,7 +1903,15 @@ async function analyzeTrade(ticker, trade, webSearchOn, apiKey) {
   const extraContext = document.getElementById('d-context').value.trim();
 
   // ── Pre-calculate all math locally ───────────────────────────────────────
-  const pre = preCalcTrade(trade, price, iv, spaxx);
+  const oi      = document.getElementById('d-oi')?.value.trim()     || '0';
+  const rv30    = document.getElementById('d-rv30')?.value.trim()   || '0';
+  const iv30    = document.getElementById('d-iv30')?.value.trim()   || iv;
+  const rv10    = document.getElementById('d-rv10')?.value.trim()   || '0';
+  const bidask  = document.getElementById('d-bidask')?.value.trim() || '0';
+  const w52hi   = document.getElementById('d-52hi')?.value.trim()   || '';
+  const w52lo   = document.getElementById('d-52lo')?.value.trim()   || '';
+  const fpe     = document.getElementById('d-fpe')?.value.trim()    || '';
+  const pre = preCalcTrade(trade, price, iv, spaxx, oi, rv30, iv30, rv10, bidask, dteMan);
 
   const fmt2 = n => isNaN(n) ? '—' : n.toFixed(2);
   const fmtPct = n => isNaN(n) ? '—' : n.toFixed(2) + '%';
@@ -971,19 +1938,68 @@ ${price ? `• Buffer to Effective Entry: ${fmtPct(pre.bufferToEffEntry)}` : ''}
 ${pre.greeks.delta !== 0 ? `• Greeks (Black-Scholes): Delta=${pre.greeks.delta} Theta=${pre.greeks.theta}/day Gamma=${pre.greeks.gamma} Vega=${pre.greeks.vega}` : '• Greeks: provide IV% in market data for auto-calculation'}
 ${pre.pop ? `• PoP (from delta): ~${pre.pop}%` : ''}
 ${pre.newBuffer !== null ? `• Cash Buffer After This Trade: ${fmtDollar(pre.newBuffer)} (from portfolio CSV)` : ''}
+${pre.protocol.hasData ? `
+⚡ GAMMA CONVEXITY RISK (pre-calculated):
+• Gamma/Theta Ratio: ${pre.protocol.gammaThetaRatio} ${pre.protocol.gammaDTEWarning ? '⚠️ INSIDE 14 DTE — gamma accelerating' : ''}
+• Convexity Risk Score: ${pre.protocol.convexityRisk}/100 — ${pre.protocol.convexityLabel}
+
+💰 EXPECTED VALUE (pre-calculated — use exactly):
+• PoP: ~${pre.protocol.hasData?(((1-Math.abs(pre.greeks?.delta||0))*100).toFixed(1)):'—'}% | PoA: ~${pre.protocol.hasData?((Math.abs(pre.greeks?.delta||0)*100).toFixed(1)):'—'}%
+• EV: ${pre.protocol.evLabel}
+• Include these exact EV figures in your decision reasoning.
+
+PROTOCOL v3.5 — REGIME-AWARE STRUCTURAL EFFICIENCY (pre-calculated — use exactly):
+GATE RESULTS:
+${pre.protocol.gates.map(g=>`  ${g.passed===false?'❌ GATE FAILED':g.passed===null?'⚠️ INCOMPLETE':'✅ PASSED'} — ${g.gate}: ${g.reason}`).join('\n')}
+${pre.protocol.gatesPassed ? `ALL GATES PASSED — proceed with scoring:
+• Yield per Delta: ${pre.protocol.yieldPerDelta} (Score: ${pre.protocol.ypd_score}/100)
+• Theta per Delta (30d normalized): $${pre.protocol.thetaPerDelta} (Score: ${pre.protocol.tpd_score}/100)
+• Buffer per Delta (regime-aware): ${pre.protocol.bufferPerDelta} — ${pre.protocol.regimeLabel} (Score: ${pre.protocol.bpd_score}/100)
+• Regime Modifier: ${pre.protocol.regimeModifier}× ${pre.protocol.ivRvRatio>1.40?'(PANIC SKEW ACTIVE)':''}
+• Expanding Vol: ${pre.protocol.expandingVolLabel}
+• Earnings Risk: ${pre.protocol.earningsLabel}
+• Protocol Composite Score: ${pre.protocol.compositeScore}/100
+• Structural Classification: ${pre.protocol.structuralLabel}
+Overlays applied: ${pre.protocol.earningsInsideDTE?'Earnings inside DTE (theta capped 85, buffer -10%)':''} ${pre.protocol.expandingVol?'Expanding vol (theta penalized 5-10%)':''}
+Include these exact values in your protocolV35 JSON field. Add 1-2 sentence interpretation.` : 'ONE OR MORE GATES FAILED — set protocolV35.gatesPassed=false and explain which gate failed and why in protocolV35.gateFailReason.'}` : '• Protocol v3.5: provide IV% to enable (requires delta calculation)'}
 `;
 
   // ── Memory context ────────────────────────────────────────────────────────
   const memoryStr = buildMemoryContext(ticker);
 
   // ── Manual data string ────────────────────────────────────────────────────
-  const webSearchStr = webSearchOn
+  // Check if price came from Finnhub
+  const finnhubKey=getFinnhubKey();
+  const priceSource = sharedSnap ? `${currentDataSource==='gemini'?'Gemini 2.5 Pro':'Claude Sonnet'} live fetch` : finnhubKey && price ? 'Finnhub real-time' : price ? 'manual input' : 'not provided';
+
+  // Build shared data string if we have a pre-fetched snapshot
+  let sharedDataStr='';
+  if(sharedSnap){
+    sharedDataStr=`
+PRE-VERIFIED LIVE DATA (fetched by ${currentDataSource==='gemini'?'Gemini 2.5 Pro':'Claude Sonnet'} — use these exact values, do not web search):
+• Current Price: $${sharedSnap.underlying} (source: ${sharedSnap.priceSource||'live fetch'})
+• 50-Day MA: $${sharedSnap.ma50||'not fetched'}
+• 200-Day MA: $${sharedSnap.ma200||'not fetched'}
+• Days to Earnings: ${sharedSnap.daysToEarnings||'unknown'} ${sharedSnap.earningsDate?'('+sharedSnap.earningsDate+')':''}
+• IV Rank: ${sharedSnap.ivRank||'not fetched'}
+• FCF Yield: ${sharedSnap.fcfYield||'not fetched'}
+• SPAXX Yield: ${sharedSnap.spaxYield||'see manual entry'}
+• 52-Week Range: $${sharedSnap.week52Low||'—'} – $${sharedSnap.week52High||'—'}
+• Forward P/E: ${sharedSnap.forwardPE||'not fetched'}
+• Recent News: ${sharedSnap.recentNews||'none'}
+• Data Confidence: ${sharedSnap.dataConfidence||'Medium'}
+This data was verified once and is shared identically across all models in this session.`;
+  }
+
+  const webSearchStr = sharedSnap
+    ? 'NO — verified data already provided above. Do NOT use web search. Focus entirely on analysis and judgment.'
+    : webSearchOn
     ? 'YES — use web search. Fetch: current price, 50d MA, 200d MA, next earnings date, recent notable news (1-3 bullets max), IV environment, SPAXX current yield. Store news in the recentNews field of your JSON response.'
-    : 'NO — do not use web search. Use manually provided data and memory context below.';
+    : `NO — do not use web search. Current price source: ${priceSource}. Use manually provided data and memory context below.`;
 
   let manualData = '';
   if (!webSearchOn) {
-    manualData = `\nMANUALLY PROVIDED MARKET DATA:\n${price?`• Current Price: $${price}`:'• Current Price: NOT PROVIDED'}\n${ma50?`• 50-Day MA: $${ma50}`:''}\n${ma200?`• 200-Day MA: $${ma200}`:''}\n${iv?`• IV: ${iv}%`:''}\n${ivrank?`• IV Rank: ${ivrank}%`:''}\n${dteMan?`• Days to Earnings (manual): ${dteMan}`:''}\n${fcf?`• FCF Yield: ${fcf}%`:''}\n${spaxx?`• SPAXX Yield: ${spaxx}%`:''}\n${extraContext?`• Context: ${extraContext}`:''}\nFor any missing data, use memory context below if available, then training knowledge — always label the source.`;
+    manualData = `\nMANUALLY PROVIDED MARKET DATA:\n${price?`• Current Price: $${price}`:'• Current Price: NOT PROVIDED'}\n${ma50?`• 50-Day MA: $${ma50}`:''}\n${ma200?`• 200-Day MA: $${ma200}`:''}\n${iv?`• IV: ${iv}%`:''}\n${ivrank?`• IV Rank: ${ivrank}%`:''}\n${dteMan?`• Days to Earnings: ${dteMan}d`:''}\n${fcf?`• FCF Yield: ${fcf}%`:''}\n${spaxx?`• SPAXX Yield: ${spaxx}%`:''}\n${oi&&oi!='0'?`• Open Interest: ${parseInt(oi).toLocaleString()} contracts`:''}\n${rv30&&rv30!='0'?`• 30-Day Realized Vol: ${rv30}%`:''}\n${iv30&&iv30!='0'&&iv30!==iv?`• 30-Day IV: ${iv30}%`:''}\n${rv10&&rv10!='0'?`• 10-Day Realized Vol: ${rv10}%`:''}\n${bidask&&bidask!='0'?`• Bid/Ask Spread: ${bidask}%`:''}\n${w52hi?`• 52-Week High: $${w52hi}`:''}\n${w52lo?`• 52-Week Low: $${w52lo}`:''}\n${fpe?`• Forward P/E: ${fpe}`:''}\n${extraContext?`• Context: ${extraContext}`:''}\nFor any missing data, use memory context below if available, then training knowledge — always label the source.`;
   }
 
   // ── Portfolio context ─────────────────────────────────────────────────────
@@ -999,7 +2015,7 @@ USE WEB SEARCH: ${webSearchStr}
 TRADE TO EVALUATE:
 ${trade.desc}${trade.notes ? `\nUSER NOTES: ${trade.notes}` : ''}
 
-${preCalcStr}
+${sharedDataStr ? sharedDataStr+'\n' : ''}${preCalcStr}
 ${manualData}
 ${memoryStr ? memoryStr + '\n' : ''}${portfolioStr}
 
@@ -1017,29 +2033,20 @@ YOUR TASKS:
 3. If web search ON: fetch price, MAs, earnings date, 1-3 recent news bullets, SPAXX yield
 4. Produce the JSON below — no markdown, no text outside JSON
 
-{"liveConfirmed":true,"livePrice":244.10,"livePriceSource":"source or manual or memory","recentNews":"1-3 bullet news summary or null","tradeDescription":"full desc","ticker":"${ticker}","tradeType":"${trade.type}","dataSnapshot":{"underlying":244.10,"ma50":250.00,"ma200":260.00,"ivRank":"45%","daysToEarnings":42,"fcfYield":"3.2%","companyScore":78,"spaxYield":"4.52%"},"returnProfile":{"cashSecured":${pre.cashSecured.toFixed(0)},"premiumCollected":${pre.premiumCollected.toFixed(0)},"premiumYield":"${fmtPct(pre.premiumYieldPct)}","daysInTrade":${pre.dte},"annualizedReturn":"${fmtPct(pre.annualizedPct)}","spaxxContribution":"${fmtPct(pre.spaxxContribPct)}","totalReturn":"${fmtPct(pre.totalReturnPct)}","blendedAnnualized":"${fmtPct(pre.blendedAnnPct)}"},"greeks":{"delta":{"value":${pre.greeks.delta||"null"},"insight":"your insight"},"theta":{"value":${pre.greeks.theta||"null"},"insight":"your insight"},"gamma":{"value":${pre.greeks.gamma||"null"},"insight":"your insight"},"vega":{"value":${pre.greeks.vega||"null"},"insight":"your insight"}},"risk":{"effectiveEntry":${pre.effectiveEntry.toFixed(2)},"bufferToStrike":"${fmtPct(pre.bufferToStrike)}","bufferToEffectiveEntry":"${fmtPct(pre.bufferToEffEntry)}","maxLoss":${pre.maxLoss.toFixed(0)},"breakEven":${pre.breakEven.toFixed(2)}},"probability":{"pop":"${pre.pop||'—'}%","poa":"${pre.pop?(100-parseFloat(pre.pop)).toFixed(1):'—'}%","edgeScore":"your score/100"},"generationalEntry":{"good":{"range":"$X–$X","description":"brief"},"great":{"range":"$X–$X","description":"brief"},"legendary":{"range":"≤$X","description":"brief"},"currentTier":"Good or Great or Legendary or Above Good"},"decision":{"overallScore":74,"companyScore":78,"entryScore":68,"verdict":"TAKE or ADJUST or PASS","reasoning":"2-3 sentence reasoning referencing DTE, return vs 12% target, entry quality","suggestedContracts":"X–X","sizingNote":"brief Fortress sizing note"},"portfolioImpact":{"additionalNotional":${pre.additionalNotional.toFixed(0)},"additionalWeightedRisk":${pre.additionalWtd.toFixed(0)},"newBufferEstimate":"${pre.newBuffer !== null ? fmtDollar(pre.newBuffer) : 'load CSV for exact figure'}","concentrationNote":"brief note on ticker concentration","cashBufferAfter":"brief"},"fortressRulesCheck":["✅ or ⚠️ each relevant rule"]}`;
+{"liveConfirmed":true,"livePrice":${sharedSnap?sharedSnap.underlying:244.10},"livePriceSource":"${sharedSnap?priceSource:'manual'}","recentNews":"1-3 bullet news summary or null","tradeDescription":"full desc","ticker":"${ticker}","tradeType":"${trade.type}","dataSnapshot":{"underlying":244.10,"ma50":250.00,"ma200":260.00,"ivRank":"45%","daysToEarnings":42,"fcfYield":"3.2%","companyScore":78,"spaxYield":"4.52%"},"returnProfile":{"cashSecured":${pre.cashSecured.toFixed(0)},"premiumCollected":${pre.premiumCollected.toFixed(0)},"premiumYield":"${fmtPct(pre.premiumYieldPct)}","daysInTrade":${pre.dte},"annualizedReturn":"${fmtPct(pre.annualizedPct)}","spaxxContribution":"${fmtPct(pre.spaxxContribPct)}","totalReturn":"${fmtPct(pre.totalReturnPct)}","blendedAnnualized":"${fmtPct(pre.blendedAnnPct)}"},"greeks":{"delta":{"value":${pre.greeks.delta||"null"},"insight":"your insight"},"theta":{"value":${pre.greeks.theta||"null"},"insight":"your insight"},"gamma":{"value":${pre.greeks.gamma||"null"},"insight":"your insight"},"vega":{"value":${pre.greeks.vega||"null"},"insight":"your insight"}},"risk":{"effectiveEntry":${pre.effectiveEntry.toFixed(2)},"bufferToStrike":"${fmtPct(pre.bufferToStrike)}","bufferToEffectiveEntry":"${fmtPct(pre.bufferToEffEntry)}","maxLoss":${pre.maxLoss.toFixed(0)},"breakEven":${pre.breakEven.toFixed(2)}},"probability":{"pop":"${pre.pop||'—'}%","poa":"${pre.pop?(100-parseFloat(pre.pop)).toFixed(1):'—'}%","edgeScore":"your score/100"},"generationalEntry":{"good":{"range":"$X–$X","description":"brief"},"great":{"range":"$X–$X","description":"brief"},"legendary":{"range":"≤$X","description":"brief"},"currentTier":"Good or Great or Legendary or Above Good"},"decision":{"overallScore":74,"companyScore":78,"entryScore":68,"verdict":"TAKE or ADJUST or PASS","reasoning":"2-3 sentence reasoning referencing DTE, return vs 12% target, entry quality","suggestedContracts":"X–X","sizingNote":"brief Fortress sizing note"},"portfolioImpact":{"additionalNotional":${pre.additionalNotional.toFixed(0)},"additionalWeightedRisk":${pre.additionalWtd.toFixed(0)},"newBufferEstimate":"${pre.newBuffer !== null ? fmtDollar(pre.newBuffer) : 'load CSV for exact figure'}","concentrationNote":"brief note on ticker concentration","cashBufferAfter":"brief"},"fortressRulesCheck":["✅ or ⚠️ each relevant rule"],"protocolV35":{"gatesPassed":true,"gateFailReason":"null or reason string","yieldPerDelta":0,"yieldPerDeltaScore":0,"thetaPerDelta":0,"thetaPerDeltaScore":0,"bufferPerDelta":0,"bufferPerDeltaScore":0,"regimeModifier":1.0,"regimeLabel":"standard or panic","compositeScore":0,"interpretation":"1-2 sentence interpretation","convexityRisk":0,"convexityLabel":"brief","gammaThetaRatio":0,"expectedValue":0,"evLabel":"brief EV assessment"}}`;
 
-  const tools = webSearchOn ? [{type:'web_search_20250305',name:'web_search'}] : [];
-  const body = {model:selectedModel, max_tokens:selectedModel.includes('opus')?4000:3000, messages:[{role:'user',content:prompt}]};
-  if (tools.length) body.tools = tools;
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':apiKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body:JSON.stringify(body)
-  });
-  if (!response.ok) { const err=await response.json(); throw new Error(err.error?.message||`API error ${response.status}`); }
-  const data = await response.json();
-  let raw = ''; for (const block of data.content) { if (block.type==='text') raw += block.text; }
-  raw = raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  const body = {messages:[{role:'user',content:prompt}], max_tokens:4000};
+  const rawText = await callModelAPI(modelId, apiKey, body, webSearchOn);
+  const raw = rawText.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
   const js = raw.indexOf('{'), je = raw.lastIndexOf('}');
   if (js===-1||je===-1) throw new Error('No JSON in response: '+raw.slice(0,200));
   const card = JSON.parse(raw.slice(js,je+1));
+  // Attach pre-calculated protocol as fallback
+  card._preProtocol = pre.protocol;
+  // Attach trade and model info for history
+  card._trade = trade;
+  card._modelInfo = MODELS[modelId]||null;
 
   // Save to memory
   if (webSearchOn) {
@@ -1055,12 +2062,95 @@ const scoreClass=s=>s>=75?'high':s>=55?'mid':'low';
 const verdictClass=v=>(v||'').toUpperCase()==='TAKE'?'take':(v||'').toUpperCase()==='PASS'?'pass':'adjust';
 const verdictPillClass=v=>(v||'').toUpperCase()==='TAKE'?'vp-take':(v||'').toUpperCase()==='PASS'?'vp-pass':'vp-adjust';
 
-function renderCard(c,num,total){
+function protocolScoreClass(s){
+  return s>=90?'ps-elite':s>=75?'ps-strong':s>=50?'ps-ok':'ps-weak';
+}
+function protocolScoreLabel(s){
+  return s>=90?'Elite':s>=75?'Strong':s>=50?'OK':'Weak';
+}
+
+function renderProtocolSection(p, preProt){
+  // Prefer Claude's returned data, fall back to pre-calculated
+  const gatesPassed = p?.gatesPassed  ?? preProt?.gatesPassed  ?? null;
+  const gates       = preProt?.gates  ?? [];
+  const ypd   = p?.yieldPerDelta      ?? preProt?.yieldPerDelta   ?? null;
+  const ypds  = p?.yieldPerDeltaScore ?? preProt?.ypd_score       ?? null;
+  const tpd   = p?.thetaPerDelta      ?? preProt?.thetaPerDelta   ?? null;
+  const tpds  = p?.thetaPerDeltaScore ?? preProt?.tpd_score       ?? null;
+  const bpd   = p?.bufferPerDelta     ?? preProt?.bufferPerDelta  ?? null;
+  const bpds  = p?.bufferPerDeltaScore?? preProt?.bpd_score       ?? null;
+  const comp  = p?.compositeScore     ?? preProt?.compositeScore  ?? null;
+  const interp= p?.interpretation     ?? '';
+  const regime= p?.regimeLabel        ?? preProt?.regimeLabel     ?? '';
+  const regMod= p?.regimeModifier     ?? preProt?.regimeModifier  ?? 1.0;
+  const gateFailReason = p?.gateFailReason ?? '';
+
+  if(ypd===null && !preProt?.hasData){
+    return \`<div class="protocol-section"><div class="protocol-title">📊 PROTOCOL v3.5 — Enter IV% to enable</div></div>\`;
+  }
+
+  // GATE FAILED display
+  if(gatesPassed===false){
+    const failedGates = gates.filter(g=>g.passed===false);
+    const gateHTML = failedGates.map(g=>\`
+      <div class="protocol-metric" style="border-left:2px solid #e74c3c;">
+        <span class="protocol-metric-label" style="color:#e74c3c;">❌ \${g.gate}</span>
+        <span class="protocol-metric-val" style="color:#e74c3c;">\${g.reason}</span>
+      </div>\`).join('');
+    return \`<div class="protocol-section" style="border-color:rgba(231,76,60,0.3);background:rgba(231,76,60,0.06);">
+      <div class="protocol-title" style="color:#e74c3c;">
+        🚫 PROTOCOL v3.5 — GATE FAILED — Scoring Blocked
+      </div>
+      \${gateHTML}
+      \${gateFailReason?'<div class="protocol-interp" style="color:#e74c3c;">'+gateFailReason+'</div>':''}
+    </div>\`;
+  }
+
+  const compClass = protocolScoreClass(comp||0);
+  const metric = (label, val, score, unit='') => \`
+    <div class="protocol-metric">
+      <span class="protocol-metric-label">\${label}</span>
+      <span class="protocol-metric-val">\${unit}\${typeof val==='number'?val.toFixed(2):'—'}
+        <span class="protocol-score \${protocolScoreClass(score||0)}">\${score||'—'}/100 \${protocolScoreLabel(score||0)}</span>
+      </span>
+    </div>\`;
+
+  // Gates summary
+  const gatesSummaryHTML = gates.length > 0 ? \`
+    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;">\${
+      gates.map(g=>\`<span style="font-family:var(--mono);font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:10px;
+        background:\${g.passed===true?'rgba(39,174,96,0.15)':g.passed===null?'rgba(201,168,76,0.15)':'rgba(231,76,60,0.15)'};
+        color:\${g.passed===true?'var(--green)':g.passed===null?'var(--gold)':'#e74c3c'};
+        border:1px solid \${g.passed===true?'rgba(39,174,96,0.25)':g.passed===null?'rgba(201,168,76,0.25)':'rgba(231,76,60,0.25)'};">
+        \${g.passed===true?'✅':g.passed===null?'⚠️':'❌'} \${g.gate}</span>\`).join('')
+    }</div>\` : '';
+
+  return \`<div class="protocol-section">
+    <div class="protocol-title">
+      📊 PROTOCOL v3.5 — Regime-Aware Structural Efficiency
+      <span class="protocol-composite">Composite: <span class="protocol-score \${compClass}" style="font-size:0.72rem;padding:0.2rem 0.6rem;">\${comp||'—'}/100</span></span>
+    </div>
+    \${gatesSummaryHTML}
+    \${metric('Yield per Delta (ann. blended ÷ |Δ|)', ypd, ypds)}
+    \${metric('Theta per Delta × DTE/30 (monthly velocity)', tpd, tpds, '$')}
+    \${metric('Buffer per Delta (regime-aware\${regMod>1?` · \${regMod}× panic boost`:''})', bpd, bpds)}
+    \${regime?'<div style="font-family:var(--mono);font-size:0.65rem;color:var(--g3);margin-top:0.35rem;">📡 '+regime+'</div>':''}
+    \${preProt?.expandingVol!==undefined?'<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+(preProt.expandingVol?'#e67e22':'var(--green)')+';">'+preProt.expandingVolLabel+'</div>':''}
+    \${preProt?.earningsInsideDTE!==undefined?'<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+(preProt.earningsInsideDTE?'#e74c3c':'var(--green)')+';">'+preProt.earningsLabel+'</div>':''}
+    \${preProt?.structuralLabel?'<div style="margin-top:0.5rem;padding-top:0.4rem;border-top:1px solid rgba(255,255,255,0.06);font-family:var(--mono);font-size:0.7rem;">Classification: <strong style="color:'+(preProt.compositeScore>=90?'var(--green)':preProt.compositeScore>=75?'var(--gold)':preProt.compositeScore>=60?'#e67e22':'#e74c3c')+';">'+preProt.structuralLabel+'</strong></div>':''}
+    \${preProt?.convexityRisk>0?'<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">⚡ Gamma Risk</span> '+preProt.convexityLabel+(preProt.gammaDTEWarning?' <strong style=\"color:#e74c3c;\">⚠️ <14 DTE</strong>':'')+' (Score: '+preProt.convexityRisk+'/100)</div>':''}
+    \${preProt?.evLabel?'<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">💰 Expected Value</span> <span style="color:'+(preProt.expectedValue>=0?'var(--green)':'#e74c3c')+';">'+preProt.evLabel+'</span></div>':''}
+    \${interp?'<div class="protocol-interp">💡 '+interp+'</div>':''}
+  </div>\`;
+}
+
+function renderCard(c,num,total,modelId,modelInfo){
   const d=c.dataSnapshot||{},r=c.returnProfile||{},g=c.greeks||{},risk=c.risk||{};
   const prob=c.probability||{},ge=c.generationalEntry||{},dec=c.decision||{},pi=c.portfolioImpact||{};
   const rulesHTML=(c.fortressRulesCheck||[]).map(r=>`<div>${r}</div>`).join('');
   const div=document.createElement('div');div.className='trade-card fade-in';
   div.innerHTML=`<div class="card-banner">
+    ${modelInfo?`<div class="model-badge ${modelInfo.badge}">${modelInfo.icon} ${modelInfo.name}</div>`:''}
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
       <div class="card-ticker">${c.ticker||''} ${total>1?`<span style="font-size:0.85rem;color:var(--g3);font-weight:400">· Trade ${num}</span>`:''}
       </div>${dec.verdict?`<span class="verdict-pill vp-${verdictClass(dec.verdict)}" style="font-size:0.9rem;padding:0.35rem 1rem;">${dec.verdict}</span>`:''}</div>
@@ -1120,13 +2210,22 @@ function renderCard(c,num,total){
       <div class="rrow"><span class="rrow-label">Cash Buffer After</span><span class="rrow-val">${pi.cashBufferAfter||'—'}</span></div></div>`:''}
     <div class="card-section"><div class="card-section-title">🏰 Fortress Rules</div>
       <div class="fortress-rules">${rulesHTML}</div></div>
+    <div class="card-section">
+      <div class="card-section-title">📊 Protocol v3.5 — Regime-Aware Structural Efficiency</div>
+      ${renderProtocolSection(c.protocolV35||c.protocolV34||null, c._preProtocol||null)}
+    </div>
   </div>`;
   document.getElementById('cards-container').appendChild(div);
+  // Auto-save to history
+  try {
+    const ticker = document.getElementById('m-ticker')?.value.trim().toUpperCase()||'';
+    if(ticker && c && c.decision) addToHistory(ticker, c._trade||{exp:c.tradeDescription,strike:'',premium:'',type:c.tradeType||'csp'}, c, c._modelInfo||null);
+  } catch(e){}
 }
 
-function renderErrorCard(trade,num,msg){
+function renderErrorCard(trade,num,msg,modelInfo){
   const div=document.createElement('div');div.className='trade-card fade-in';
-  div.innerHTML=`<div class="card-banner"><div class="card-ticker">Trade ${num} — Error</div><div class="card-trade-desc">${trade.desc}</div></div><div class="card-body"><p style="font-family:var(--mono);font-size:0.8rem;color:#e74c3c;">${msg}</p></div>`;
+  div.innerHTML=`<div class="card-banner">${modelInfo?`<div class="model-badge ${modelInfo.badge}">${modelInfo.icon} ${modelInfo.name}</div>`:''}<div class="card-ticker">Trade ${num} — Error</div><div class="card-trade-desc">${trade.desc}</div></div><div class="card-body"><p style="font-family:var(--mono);font-size:0.8rem;color:#e74c3c;">${msg}</p></div>`;
   document.getElementById('cards-container').appendChild(div);
 }
 
@@ -1138,10 +2237,430 @@ function renderComparison(results){
     if(!r.card){tbody+=`<tr><td>${i+1}</td><td colspan="6" style="color:#e74c3c">Error</td></tr>`;return;}
     const d=r.card.decision||{},rp=r.card.returnProfile||{},pr=r.card.probability||{},ge=r.card.generationalEntry||{};
     const isBest=r===best;
-    tbody+=`<tr${isBest?' class="best-row"':''}><td style="color:var(--g3)">${i+1}${isBest?' ⭐':''}</td><td style="color:#fff;max-width:160px;word-break:break-word;">${r.trade.desc.slice(0,50)}${r.trade.desc.length>50?'…':''}</td><td style="color:${(d.overallScore||0)>=75?'var(--green)':(d.overallScore||0)>=55?'var(--gold)':'#e74c3c'}">${d.overallScore||'—'}</td><td style="color:var(--green)">${rp.blendedAnnualized||'—'}</td><td style="color:var(--green)">${pr.pop||'—'}</td><td>${ge.currentTier||'—'}</td><td><span class="verdict-pill ${verdictPillClass(d.verdict)}">${d.verdict||'—'}</span></td></tr>`;
+    const mInfo=r.modelInfo||{name:'',badge:'',icon:''};
+    tbody+=`<tr${isBest?' class="best-row"':''}><td style="color:var(--g3)">${i+1}${isBest?' ⭐':''}</td><td><span class="model-badge ${mInfo.badge}" style="font-size:0.6rem;padding:0.1rem 0.4rem;">${mInfo.icon} ${mInfo.name}</span></td><td style="color:#fff;max-width:120px;word-break:break-word;">${r.trade.desc.slice(0,40)}${r.trade.desc.length>40?'…':''}</td><td style="color:${(d.overallScore||0)>=75?'var(--green)':(d.overallScore||0)>=55?'var(--gold)':'#e74c3c'}">${d.overallScore||'—'}</td><td style="color:var(--green)">${rp.blendedAnnualized||'—'}</td><td style="color:var(--green)">${pr.pop||'—'}</td><td>${ge.currentTier||'—'}</td><td><span class="verdict-pill ${verdictPillClass(d.verdict)}">${d.verdict||'—'}</span></td></tr>`;
   });
-  document.getElementById('comp-table').innerHTML=`<thead><tr><th>#</th><th>Trade</th><th>Score</th><th>Return</th><th>PoP</th><th>Tier</th><th>Verdict</th></tr></thead><tbody>${tbody}</tbody>`;
+  document.getElementById('comp-table').innerHTML=`<thead><tr><th>#</th><th>Model</th><th>Trade</th><th>Score</th><th>Return</th><th>PoP</th><th>Tier</th><th>Verdict</th></tr></thead><tbody>${tbody}</tbody>`;
   const bar=document.getElementById('comparison-bar');bar.classList.add('show');bar.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function runSynthesis(){
+  const claudeKey = getApiKey();
+  if(!claudeKey){ showFtError('Claude API key required for synthesis.'); return; }
+  const validResults = lastRunResults.filter(r=>r.card);
+  if(validResults.length < 2){ showFtError('Need at least 2 successful model results to synthesize.'); return; }
+
+  const synthBtn = document.getElementById('synthesize-btn');
+  const synthCard = document.getElementById('synthesis-card');
+  const synthBody = document.getElementById('synthesis-body');
+  const synthSubtitle = document.getElementById('synthesis-subtitle');
+
+  synthBtn.disabled = true;
+  synthBtn.textContent = '⏳ Synthesizing…';
+  synthCard.classList.add('show');
+  synthBody.innerHTML = '<div style="font-family:var(--mono);font-size:0.8rem;color:var(--g3);padding:1rem;">Claude Opus is reading all model analyses and forming a final verdict…</div>';
+
+  // Build synthesis prompt
+  const summaries = validResults.map((r,i) => {
+    const d = r.card.decision||{};
+    const rp = r.card.returnProfile||{};
+    const pr = r.card.probability||{};
+    const snap = r.card.dataSnapshot||{};
+    const p35 = r.card.protocolV35||{};
+    return `═══ MODEL ${i+1}: ${r.modelInfo?.name||r.modelId} ═══
+Trade: ${r.card.tradeDescription||r.trade.desc}
+Verdict: ${d.verdict||'—'} (Overall Score: ${d.overallScore||'—'}/100, Company: ${d.companyScore||'—'}/100, Entry: ${d.entryScore||'—'}/100)
+Blended Annualized Return: ${rp.blendedAnnualized||'—'}
+PoP: ${pr.pop||'—'} | Edge Score: ${pr.edgeScore||'—'}
+Entry Tier: ${r.card.generationalEntry?.currentTier||'—'}
+Protocol v3.5 Composite: ${p35.compositeScore||'—'}/100 (${p35.structuralLabel||'—'})
+Reasoning: ${d.reasoning||'—'}
+Suggested Contracts: ${d.suggestedContracts||'—'} — ${d.sizingNote||'—'}
+Fortress Rules: ${(r.card.fortressRulesCheck||[]).join(' | ')}
+${r.card.recentNews?'News: '+r.card.recentNews:''}`;
+  }).join('
+
+');
+
+  const ticker = validResults[0].trade.desc.match(/[A-Z]{2,5}/)?.[0] || 'UNKNOWN';
+  const portfolioStr = portfolioContext
+    ? `Portfolio context: Cash ${portfolioContext.cash} · Available ${portfolioContext.availableCash} · Wtd Risk ${portfolioContext.weightedNotional} · Buffer ${portfolioContext.bufferVsWeighted}`
+    : 'Portfolio: ~$4.5M total, ~$2.75M available, user 45, wealth preservation first.';
+
+  const synthesisPrompt = `You are the Fortress Engine v3.5 Chief Analyst. You have received independent analyses of the same options trade from ${validResults.length} different AI models. Your job is to synthesize these into one definitive final verdict.
+
+${summaries}
+
+${portfolioStr}
+
+FORTRESS RULES: Preservation paramount. Goal 12%+ blended annualized. Assignment at Great/Legendary entry = acceptable outcome.
+
+SYNTHESIS INSTRUCTIONS:
+1. Identify where all models AGREE (strong signal)
+2. Identify where models DISAGREE and explain what the disagreement means
+3. Determine which model's reasoning is most sound for this specific trade
+4. Deliver ONE definitive TAKE / ADJUST / PASS verdict
+5. Provide final suggested contract sizing
+6. Note any risk factor that multiple models flagged independently
+
+Respond ONLY with valid JSON:
+{
+  "ticker": "${ticker}",
+  "modelsAnalyzed": ${validResults.length},
+  "modelNames": [${validResults.map(r=>`"${r.modelInfo?.name||r.modelId}"`).join(',')}],
+  "consensusVerdict": "TAKE or ADJUST or PASS",
+  "unanimousVerdict": true or false,
+  "verdictBreakdown": "e.g. 3 TAKE, 1 ADJUST",
+  "agreementAreas": ["list of things all models agreed on"],
+  "disagreementAreas": ["list of conflicts and what they mean"],
+  "strongestArgument": "the most compelling reasoning across all models",
+  "overriddenConcern": "any concern one model raised that others missed — worth noting even if not a dealbreaker",
+  "finalScore": 74,
+  "finalReasoning": "3-4 sentence definitive reasoning incorporating all perspectives",
+  "finalSuggestedContracts": "X–X",
+  "finalSizingNote": "Fortress-guardrail-aware sizing note",
+  "riskConsensus": ["risks flagged by 2+ models independently"],
+  "synthesisConfidence": "High / Medium / Low — based on how much models agreed"
+}`;
+
+  try {
+    const body = {messages:[{role:'user',content:synthesisPrompt}], max_tokens:3000};
+    const rawText = await callModelAPI('claude-opus-4-5', claudeKey, body, false);
+    const raw = rawText.replace(/```json
+?/g,'').replace(/```
+?/g,'').trim();
+    const js = raw.indexOf('{'), je = raw.lastIndexOf('}');
+    if(js===-1||je===-1) throw new Error('No JSON in synthesis response');
+    const syn = JSON.parse(raw.slice(js,je+1));
+    renderSynthesis(syn, validResults);
+    synthSubtitle.textContent = `${syn.modelsAnalyzed} models synthesized · ${syn.synthesisConfidence} confidence · ${new Date().toLocaleTimeString()}`;
+  } catch(e) {
+    synthBody.innerHTML = `<div style="font-family:var(--mono);font-size:0.8rem;color:#e74c3c;padding:1rem;">Synthesis error: ${e.message}</div>`;
+  }
+
+  synthBtn.disabled = false;
+  synthBtn.textContent = '🏰 Re-Synthesize';
+}
+
+function renderSynthesis(syn, results){
+  const synthBody = document.getElementById('synthesis-body');
+  const vcClass = syn.consensusVerdict==='TAKE'?'take':syn.consensusVerdict==='PASS'?'pass':'adjust';
+  const confidenceColor = syn.synthesisConfidence==='High'?'var(--green)':syn.synthesisConfidence==='Medium'?'var(--gold)':'#e74c3c';
+
+  const agreeHTML = (syn.agreementAreas||[]).map(a=>`<div style="margin-bottom:0.3rem;">✅ ${a}</div>`).join('');
+  const disagreeHTML = (syn.disagreementAreas||[]).map(a=>`<div style="margin-bottom:0.3rem;">⚖️ ${a}</div>`).join('');
+  const riskHTML = (syn.riskConsensus||[]).map(r=>`<div style="margin-bottom:0.3rem;">⚠️ ${r}</div>`).join('');
+
+  synthBody.innerHTML = `
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;">
+        <span class="model-badge mb-synthesis" style="font-size:0.72rem;padding:0.25rem 0.7rem;">🏰 Claude Opus Synthesis</span>
+        <span style="font-family:var(--mono);font-size:0.72rem;color:var(--g3);">${syn.verdictBreakdown||''} · ${syn.unanimousVerdict?'Unanimous':'Split decision'}</span>
+        <span style="font-family:var(--mono);font-size:0.72rem;color:${confidenceColor};">Confidence: ${syn.synthesisConfidence}</span>
+      </div>
+
+      <div class="verdict ${vcClass}" style="margin-bottom:1rem;">
+        <span class="verdict-badge">${syn.consensusVerdict}</span>
+        <span class="verdict-reason">${syn.finalReasoning}</span>
+        <span class="verdict-sizing">📐 ${syn.finalSuggestedContracts||'—'} · ${syn.finalSizingNote||''}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+        <div style="background:rgba(39,174,96,0.06);border:1px solid rgba(39,174,96,0.15);border-radius:9px;padding:0.75rem;">
+          <div style="font-family:var(--mono);font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Models Agreed On</div>
+          <div style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);line-height:1.7;">${agreeHTML||'No universal agreement noted'}</div>
+        </div>
+        <div style="background:rgba(230,126,34,0.06);border:1px solid rgba(230,126,34,0.15);border-radius:9px;padding:0.75rem;">
+          <div style="font-family:var(--mono);font-size:0.65rem;color:#e67e22;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Models Disagreed On</div>
+          <div style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);line-height:1.7;">${disagreeHTML||'No significant disagreements'}</div>
+        </div>
+      </div>
+
+      ${syn.strongestArgument?`<div style="background:rgba(255,255,255,0.03);border-radius:9px;padding:0.75rem;margin-bottom:0.75rem;">
+        <div style="font-family:var(--mono);font-size:0.65rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;">Strongest Argument Across All Models</div>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--g1);line-height:1.6;">${syn.strongestArgument}</div>
+      </div>`:''}
+
+      ${syn.overriddenConcern?`<div style="background:rgba(231,76,60,0.05);border:1px solid rgba(231,76,60,0.12);border-radius:9px;padding:0.75rem;margin-bottom:0.75rem;">
+        <div style="font-family:var(--mono);font-size:0.65rem;color:#e74c3c;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;">Notable Concern (minority view — consider)</div>
+        <div style="font-family:var(--mono);font-size:0.72rem;color:var(--g3);line-height:1.6;">${syn.overriddenConcern}</div>
+      </div>`:''}
+
+      ${riskHTML?`<div style="background:rgba(231,76,60,0.05);border:1px solid rgba(231,76,60,0.12);border-radius:9px;padding:0.75rem;">
+        <div style="font-family:var(--mono);font-size:0.65rem;color:#e74c3c;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Risks Flagged by Multiple Models</div>
+        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--g3);line-height:1.7;">${riskHTML}</div>
+      </div>`:''}
+
+      <div style="margin-top:0.75rem;text-align:right;font-family:var(--mono);font-size:0.65rem;color:var(--g3);">
+        Final Score: ${syn.finalScore||'—'}/100 · Synthesized from ${syn.modelsAnalyzed} models: ${(syn.modelNames||[]).join(', ')}
+      </div>
+    </div>`;
+}
+
+
+// ══════════════════════════════════════
+//  TRADE HISTORY SYSTEM
+// ══════════════════════════════════════
+const HISTORY_KEY = 'fortress_trade_history';
+const HISTORY_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+let historySortCol = 'date';
+let historySortDir = 'desc';
+
+function loadHistory(){
+  try {
+    const all = JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+    const cutoff = Date.now() - HISTORY_TTL;
+    return all.filter(r => r.timestamp > cutoff);
+  } catch(e){ return []; }
+}
+
+function saveHistory(items){
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(items)); } catch(e){}
+}
+
+function addToHistory(ticker, trade, card, modelInfo){
+  const items = loadHistory();
+  const dec = card.decision||{};
+  const rp  = card.returnProfile||{};
+  const pr  = card.probability||{};
+  const snap= card.dataSnapshot||{};
+  const p35 = card.protocolV35||{};
+  const entry = {
+    id: Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    timestamp: Date.now(),
+    ticker,
+    type: trade.type||'csp',
+    expiry: trade.exp||'',
+    strike: parseFloat(trade.strike)||0,
+    premium: parseFloat(trade.premium)||0,
+    longStrike: parseFloat(trade.longStrike)||0,
+    contracts: trade.contracts||'',
+    notes: trade.notes||'',
+    // Market data entered at time of run
+    price: document.getElementById('d-price')?.value||'',
+    iv: document.getElementById('d-iv')?.value||'',
+    ma50: document.getElementById('d-ma50')?.value||'',
+    ma200: document.getElementById('d-ma200')?.value||'',
+    dte_earnings: document.getElementById('d-dte')?.value||'',
+    fcf: document.getElementById('d-fcf')?.value||'',
+    spaxx: document.getElementById('d-spaxx')?.value||'',
+    ivrank: document.getElementById('d-ivrank')?.value||'',
+    oi: document.getElementById('d-oi')?.value||'',
+    rv30: document.getElementById('d-rv30')?.value||'',
+    iv30: document.getElementById('d-iv30')?.value||'',
+    rv10: document.getElementById('d-rv10')?.value||'',
+    bidask: document.getElementById('d-bidask')?.value||'',
+    context: document.getElementById('d-context')?.value||'',
+    // Results
+    verdict: dec.verdict||'',
+    overallScore: dec.overallScore||0,
+    companyScore: dec.companyScore||0,
+    entryScore: dec.entryScore||0,
+    reasoning: dec.reasoning||'',
+    suggestedContracts: dec.suggestedContracts||'',
+    blendedAnnualized: rp.blendedAnnualized||'',
+    pop: pr.pop||'',
+    entryTier: card.generationalEntry?.currentTier||'',
+    protocolScore: p35.compositeScore||0,
+    structuralLabel: p35.structuralLabel||'',
+    livePrice: card.livePrice||snap.underlying||'',
+    modelName: modelInfo?.name||'Claude',
+    modelId: modelInfo?.icon ? modelInfo.icon+' '+modelInfo.name : 'Claude',
+  };
+  items.unshift(entry);
+  saveHistory(items);
+  refreshHistoryBadge();
+  renderHistoryTable();
+}
+
+function refreshHistoryBadge(){
+  const items = loadHistory();
+  const badge = document.getElementById('history-count-badge');
+  if(badge) badge.textContent = `(${items.length} trade${items.length!==1?'s':''} · 7 days)`;
+}
+
+function toggleHistory(){
+  const body = document.getElementById('history-body');
+  const arrow = document.getElementById('history-arrow');
+  body.classList.toggle('show');
+  arrow.classList.toggle('open');
+  if(body.classList.contains('show')) renderHistoryTable();
+}
+
+function sortHistory(col){
+  if(historySortCol===col){
+    historySortDir = historySortDir==='asc'?'desc':'asc';
+  } else {
+    historySortCol=col;
+    historySortDir='desc';
+  }
+  document.getElementById('history-sort-col').value=col;
+  document.getElementById('history-sort-dir').value=historySortDir;
+  renderHistoryTable();
+}
+
+function renderHistoryTable(){
+  const items = loadHistory();
+  const search = (document.getElementById('history-search')?.value||'').toLowerCase().trim();
+  const sortCol = document.getElementById('history-sort-col')?.value || historySortCol;
+  const sortDir = document.getElementById('history-sort-dir')?.value || historySortDir;
+
+  // Filter
+  let filtered = items.filter(r => {
+    if(!search) return true;
+    return (r.ticker+r.type+r.verdict+r.expiry+r.entryTier+r.structuralLabel+r.modelId)
+      .toLowerCase().includes(search);
+  });
+
+  // Sort
+  filtered.sort((a,b)=>{
+    let av=a[sortCol], bv=b[sortCol];
+    if(sortCol==='date') { av=a.timestamp; bv=b.timestamp; }
+    if(typeof av==='string') av=av.toLowerCase();
+    if(typeof bv==='string') bv=bv.toLowerCase();
+    if(av<bv) return sortDir==='asc'?-1:1;
+    if(av>bv) return sortDir==='asc'?1:-1;
+    return 0;
+  });
+
+  const tbody = document.getElementById('history-tbody');
+  const empty = document.getElementById('history-empty');
+  const table = document.getElementById('history-table');
+
+  if(!filtered.length){
+    if(tbody) tbody.innerHTML='';
+    if(table) table.style.display='none';
+    if(empty) empty.style.display='block';
+    updateLoadBtn();
+    return;
+  }
+  if(table) table.style.display='';
+  if(empty) empty.style.display='none';
+
+  const vClass = v => v==='TAKE'?'hv-take':v==='PASS'?'hv-pass':'hv-adjust';
+  const fmtDate = ts => {
+    const d=new Date(ts);
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  };
+  const typeLabel = t => t==='csp'?'CSP':t==='spread'?'Spread':t==='cc'?'CC':t.toUpperCase();
+
+  tbody.innerHTML = filtered.map(r => `
+    <tr id="hrow-${r.id}" onclick="toggleHistoryRow('${r.id}')" style="cursor:pointer;">
+      <td onclick="event.stopPropagation()">
+        <input type="checkbox" class="history-check" id="hchk-${r.id}" onchange="updateLoadBtn()" onclick="event.stopPropagation()">
+      </td>
+      <td class="history-ticker">${r.ticker}</td>
+      <td style="color:var(--g3)">${typeLabel(r.type)}</td>
+      <td style="color:var(--g3)">${r.expiry}</td>
+      <td>$${r.strike}</td>
+      <td>$${r.premium}</td>
+      <td style="color:${r.overallScore>=75?'var(--green)':r.overallScore>=55?'var(--gold)':'#e74c3c'};font-weight:500">${r.overallScore||'—'}</td>
+      <td><span class="history-verdict ${vClass(r.verdict)}">${r.verdict||'—'}</span></td>
+      <td style="color:var(--green)">${r.blendedAnnualized||'—'}</td>
+      <td style="color:var(--green)">${r.pop||'—'}</td>
+      <td style="color:var(--g3);white-space:nowrap">${fmtDate(r.timestamp)}</td>
+      <td style="color:var(--g3);font-size:0.65rem">${r.modelId||'—'}</td>
+    </tr>`).join('');
+
+  updateLoadBtn();
+}
+
+function toggleHistoryRow(id){
+  const chk = document.getElementById('hchk-'+id);
+  const row = document.getElementById('hrow-'+id);
+  if(chk){ chk.checked=!chk.checked; }
+  if(row){ row.classList.toggle('selected-row', chk?.checked); }
+  updateLoadBtn();
+}
+
+function updateLoadBtn(){
+  const checked = document.querySelectorAll('.history-check:checked');
+  const btn = document.getElementById('history-load-btn');
+  if(!btn) return;
+  if(checked.length>0){
+    btn.classList.add('show');
+    btn.textContent=`⚡ Load ${checked.length} Selected for Web Analysis`;
+  } else {
+    btn.classList.remove('show');
+  }
+}
+
+function loadSelectedToEvaluator(){
+  const checked = document.querySelectorAll('.history-check:checked');
+  if(!checked.length) return;
+  const items = loadHistory();
+  const selectedIds = Array.from(checked).map(c=>c.id.replace('hchk-',''));
+  const selected = selectedIds.map(id=>items.find(r=>r.id===id)).filter(Boolean);
+  if(!selected.length) return;
+
+  // Clear existing trades
+  document.getElementById('trade-builder').innerHTML='';
+  tradeCount=0;
+
+  // Use ticker from first selected
+  const firstTicker = selected[0].ticker;
+  document.getElementById('m-ticker').value = firstTicker;
+
+  // Restore market data from first selected (they share same ticker)
+  const md = selected[0];
+  if(md.price) document.getElementById('d-price').value=md.price;
+  if(md.iv)    document.getElementById('d-iv').value=md.iv;
+  if(md.ma50)  document.getElementById('d-ma50').value=md.ma50;
+  if(md.ma200) document.getElementById('d-ma200').value=md.ma200;
+  if(md.dte_earnings) document.getElementById('d-dte').value=md.dte_earnings;
+  if(md.fcf)   document.getElementById('d-fcf').value=md.fcf;
+  if(md.spaxx) document.getElementById('d-spaxx').value=md.spaxx;
+  if(md.ivrank) document.getElementById('d-ivrank').value=md.ivrank;
+  if(md.oi)    document.getElementById('d-oi').value=md.oi;
+  if(md.rv30)  document.getElementById('d-rv30').value=md.rv30;
+  if(md.iv30)  document.getElementById('d-iv30').value=md.iv30;
+  if(md.rv10)  document.getElementById('d-rv10').value=md.rv10;
+  if(md.bidask) document.getElementById('d-bidask').value=md.bidask;
+  if(md.context) document.getElementById('d-context').value=md.context;
+
+  // Add each selected trade as a trade row
+  selected.forEach(r => {
+    addTrade();
+    const rows = document.querySelectorAll('.trade-row');
+    const row = rows[rows.length-1];
+    if(!row) return;
+    row.querySelector('.t-exp').value = r.expiry;
+    row.querySelector('.t-strike').value = r.strike;
+    row.querySelector('.t-premium').value = r.premium;
+    if(r.contracts) row.querySelector('.t-contracts').value = r.contracts;
+    if(r.notes) row.querySelector('.t-notes').value = r.notes;
+    if(r.longStrike && row.querySelector('.t-long-strike'))
+      row.querySelector('.t-long-strike').value = r.longStrike;
+    // Set type
+    const typeMap={'csp':'Cash-Secured Put','spread':'Put Spread','cc':'Covered Call','other':'Other'};
+    const typeBtns = row.querySelectorAll('.type-btn');
+    typeBtns.forEach(btn=>{
+      if(btn.textContent.trim()===typeMap[r.type]){
+        btn.click();
+      }
+    });
+  });
+
+  // Turn on web search
+  const toggle = document.getElementById('web-search-toggle');
+  if(toggle && !toggle.checked){
+    toggle.checked=true;
+    toggleWebSearch();
+  }
+
+  // Scroll to trade builder
+  document.querySelector('.panel:has(#trade-builder)').scrollIntoView({behavior:'smooth',block:'start'});
+
+  // Show confirmation
+  const ticker = selected.map(r=>r.ticker).join(', ');
+  document.getElementById('loading-step').textContent=`${selected.length} trade${selected.length!==1?'s':''} loaded from history · Web search ON · Ready to run`;
+}
+
+function clearHistory(){
+  if(!confirm('Clear all 7-day trade history? This cannot be undone.')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  refreshHistoryBadge();
+  renderHistoryTable();
 }
 
 function showFtError(msg){document.getElementById('error-msg').textContent=msg;document.getElementById('error-card').classList.add('show');}
