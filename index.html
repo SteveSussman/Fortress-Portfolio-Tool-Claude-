@@ -957,9 +957,10 @@ function getApiKey(){return document.getElementById('api-key').value.trim();}
 
 function toggleWebSearch(){
   const on=document.getElementById('web-search-toggle').checked;
-  document.getElementById('ws-status').textContent=on?'ON':'OFF';
-  document.getElementById('ws-status').style.color=on?'var(--green)':'var(--g3)';
-  document.getElementById('manual-form').classList.toggle('show',!on);
+  const wsStatus=document.getElementById('ws-status');
+  if(wsStatus){ wsStatus.textContent=on?'ON':'OFF'; wsStatus.style.color=on?'var(--green)':'var(--g3)'; }
+  const manualForm=document.getElementById('manual-form');
+  if(manualForm) manualForm.classList.toggle('show',!on);
 }
 
 function onTickerChange(){
