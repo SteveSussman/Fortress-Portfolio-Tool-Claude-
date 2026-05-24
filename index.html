@@ -932,11 +932,25 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ft-csv-upload').addEventListener('change',e=>{
     if(e.target.files[0]) loadFtPortfolioCSV(e.target.files[0]);
   });
-  addTrade();
+  // Initialize trade builder with safety check
+  try {
+    if(document.getElementById('trade-builder')) {
+      addTrade();
+    } else {
+      // Fallback: retry after DOM settles
+      setTimeout(()=>{ if(document.getElementById('trade-builder')) addTrade(); }, 200);
+    }
+  } catch(e){ console.error('addTrade init error:', e); }
   // Auto-fetch SPAXX yield on load (cached 24h)
-  fetchSpaxxYield();
+  try { fetchSpaxxYield(); } catch(e){}
   // Initialize history
-  refreshHistoryBadge();
+  try { refreshHistoryBadge(); } catch(e){}
+});
+
+// Extra safety: ensure at least one trade row exists after full page load
+window.addEventListener('load', ()=>{
+  const builder=document.getElementById('trade-builder');
+  if(builder && builder.children.length===0) addTrade();
 });
 
 function getApiKey(){return document.getElementById('api-key').value.trim();}
@@ -1075,6 +1089,8 @@ function clearFtPortfolio(){
 }
 
 function addTrade(){
+  const builder=document.getElementById('trade-builder');
+  if(!builder){console.error('trade-builder not found');return;}
   if(tradeCount>=5){alert('Maximum 5 trades.');return;}
   tradeCount++;const id=tradeCount;
   const div=document.createElement('div');
