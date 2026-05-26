@@ -22,46 +22,80 @@ async function unlockFortress() {
   try {
     const encoder = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
-    const salt = Uint8Array.from(atob(ENCRYPTED_KEYS.salt), c=>c.charCodeAt(0));
-    const nonce = Uint8Array.from(atob(ENCRYPTED_KEYS.nonce), c=>c.charCodeAt(0));
-    const ct = Uint8Array.from(atob(ENCRYPTED_KEYS.ct), c=>c.charCodeAt(0));
+    const saltArr  = Uint8Array.from(atob(ENCRYPTED_KEYS.salt),  c=>c.charCodeAt(0));
+    const nonceArr = Uint8Array.from(atob(ENCRYPTED_KEYS.nonce), c=>c.charCodeAt(0));
+    const ctArr    = Uint8Array.from(atob(ENCRYPTED_KEYS.ct),    c=>c.charCodeAt(0));
     const aesKey = await crypto.subtle.deriveKey(
-      {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+      {name:'PBKDF2', salt:saltArr, iterations:100000, hash:'SHA-256'},
       keyMaterial, {name:'AES-GCM', length:256}, false, ['decrypt']
     );
-    const decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:nonce}, aesKey, ct);
+    const decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:nonceArr}, aesKey, ctArr);
     const keys = JSON.parse(new TextDecoder().decode(decrypted));
-    if(keys.claude)  { localStorage.setItem('fortress_api_key',    keys.claude);   const el=document.getElementById('api-key');       if(el) el.value=keys.claude; }
-    if(keys.openai)  { localStorage.setItem('fortress_openai_key', keys.openai);   const el=document.getElementById('key-openai');   if(el) el.value=keys.openai; }
-    if(keys.google)  { localStorage.setItem('fortress_google_key', keys.google);   const el=document.getElementById('key-google');   if(el) el.value=keys.google; }
-    if(keys.xai)     { localStorage.setItem('fortress_xai_key',    keys.xai);      const el=document.getElementById('key-xai');      if(el) el.value=keys.xai; }
-    if(keys.finnhub) { localStorage.setItem('fortress_finnhub_key',keys.finnhub);  const el=document.getElementById('finnhub-key'); if(el) el.value=keys.finnhub; }
-    document.getElementById('password-gate').style.display='none';
+
+    // Inject all keys into fields and localStorage
+    const inject = (storKey, elId, val) => {
+      if(!val) return;
+      localStorage.setItem(storKey, val);
+      const el = document.getElementById(elId);
+      if(el) el.value = val;
+    };
+    inject('fortress_api_key',    'api-key',     keys.claude);
+    inject('fortress_openai_key', 'key-openai',  keys.openai);
+    inject('fortress_google_key', 'key-google',  keys.google);
+    inject('fortress_xai_key',    'key-xai',     keys.xai);
+    inject('fortress_finnhub_key','finnhub-key', keys.finnhub);
+
+    // Hide gate
+    const gate = document.getElementById('password-gate');
+    if(gate) gate.style.display='none';
     document.body.style.overflow='';
     sessionStorage.setItem('fortress_unlocked','1');
+
+    // Run all init that was blocked while gate was showing
     try { updateModelSelection(); } catch(e) {}
     try { fetchSpaxxYield(); } catch(e) {}
     try { refreshHistoryBadge(); } catch(e) {}
-    try { if(document.getElementById('trade-builder').children.length===0) addTrade(); } catch(e) {}
+    // Ensure trade builder has at least one row
+    setTimeout(() => {
+      try {
+        const builder = document.getElementById('trade-builder');
+        if(builder && builder.children.length === 0) addTrade();
+      } catch(e) {}
+    }, 100);
+
   } catch(e) {
-    errorEl.textContent='Incorrect password — try again';
+    console.error('Unlock error:', e);
+    errorEl.textContent = 'Incorrect password — try again';
     btn.disabled=false; btn.textContent='Unlock';
     pwInput.value=''; pwInput.focus();
   }
 }
 
+
 window.addEventListener('load', () => {
   if(sessionStorage.getItem('fortress_unlocked')==='1') {
-    const ck=localStorage.getItem('fortress_api_key');        if(ck) { const el=document.getElementById('api-key');       if(el) el.value=ck; }
-    const ok=localStorage.getItem('fortress_openai_key');  if(ok) { const el=document.getElementById('key-openai');   if(el) el.value=ok; }
-    const gk=localStorage.getItem('fortress_google_key');  if(gk) { const el=document.getElementById('key-google');   if(el) el.value=gk; }
-    const xk=localStorage.getItem('fortress_xai_key');     if(xk) { const el=document.getElementById('key-xai');      if(el) el.value=xk; }
-    const fk=localStorage.getItem('fortress_finnhub_key'); if(fk) { const el=document.getElementById('finnhub-key'); if(el) el.value=fk; }
-    document.getElementById('password-gate').style.display='none';
+    // Already unlocked this session — restore keys and show tool
+    const restoreKey = (storKey, elId) => {
+      const v=localStorage.getItem(storKey); if(v) { const el=document.getElementById(elId); if(el) el.value=v; }
+    };
+    restoreKey('fortress_api_key',    'api-key');
+    restoreKey('fortress_openai_key', 'key-openai');
+    restoreKey('fortress_google_key', 'key-google');
+    restoreKey('fortress_xai_key',    'key-xai');
+    restoreKey('fortress_finnhub_key','finnhub-key');
+    const gate = document.getElementById('password-gate');
+    if(gate) gate.style.display='none';
     document.body.style.overflow='';
+    try { updateModelSelection(); } catch(e) {}
+    try { fetchSpaxxYield(); } catch(e) {}
+    try { refreshHistoryBadge(); } catch(e) {}
+    setTimeout(()=>{ try{ const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); }catch(e){} },100);
   } else {
+    // Show gate — keep body scroll locked
     document.body.style.overflow='hidden';
     setTimeout(()=>{ const el=document.getElementById('gate-password'); if(el) el.focus(); }, 200);
+    // Still init trade builder in background (hidden behind gate)
+    try { const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); } catch(e) {}
   }
 });
 
