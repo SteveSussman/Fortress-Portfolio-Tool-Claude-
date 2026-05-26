@@ -20,6 +20,13 @@ async function unlockFortress() {
   if(!password) { errorEl.textContent='Enter your password'; return; }
   btn.disabled=true; btn.textContent='Unlocking…'; errorEl.textContent='';
   try {
+    console.log('Starting unlock...');
+    if(!window.crypto || !window.crypto.subtle) {
+      errorEl.textContent = 'Error: Web Crypto API not available (need HTTPS)';
+      btn.disabled=false; btn.textContent='Unlock';
+      return;
+    }
+    console.log('Crypto available, deriving key...');
     const encoder = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
     const saltArr  = Uint8Array.from(atob(ENCRYPTED_KEYS.salt),  c=>c.charCodeAt(0));
@@ -65,9 +72,10 @@ async function unlockFortress() {
 
   } catch(e) {
     console.error('Unlock error:', e);
-    errorEl.textContent = 'Incorrect password — try again';
+    // Show actual error so we can debug
+    errorEl.textContent = 'Error: ' + (e.message || String(e));
+    errorEl.style.color = '#e74c3c';
     btn.disabled=false; btn.textContent='Unlock';
-    pwInput.value=''; pwInput.focus();
   }
 }
 
