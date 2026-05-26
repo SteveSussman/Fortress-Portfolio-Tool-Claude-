@@ -5,107 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Fortress Portfolio Suite</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
-// ENCRYPTED API KEYS (AES-256-GCM)
-const ENCRYPTED_KEYS = {
-  salt:  'UFDXthR508RAGho67XBL8A==',
-  nonce: 'asWczoHBSAF4EufD',
-  ct:    'MPTSPh+eGlUTvGOOP44JWQRLzMRfSdy2F9URieQALW2IDlN0XaYrHLvXZGzZHgEmOQ3gKbcVKjNX1q2WMAOMN+qHoJ6wBLY4dBD93pmWigPamThrc5NCFCxI/X4bJm9sW2Ua3l6YjmTXOyAHuPkWgcR/5/YTf4PQNVhXf0VSMKv7PQO9j48SGsDwlpBTI16Hj2duV0LVl+5P2PG0A0wheILjRxnpjW6bB2P4bSSfT+2MfJsc9mE4O84Csf9p4JzBMOoJOCcHneJhppmCPdDg4vuOo/lZ7+3JNIpLrm8N1c2kNpxPG01+Z7xS1VfQTLMcZtQvKhOBLPDyDOZjdkM7QjfaZAHGfnZQc6GtlQLUIUjCmlZZf70J3Pdn0W6dVm3Odb4Gs0AIdRXlFWLvYekXTHQhTfzs2mbRLtVWRWkM22jvzvNnlg9co8QRT29A2tZxHJzOofnGbKKq7wKEPLp2MdwZ7wgAS3BauMay84gyOTjSszQDLrx/jTAMDDY3so3puvzDtB0sWTHvwF5ONttiHaHEKgkoymM6zf9S2BMRV3Ybe9RPRskmXzyh9F8wfdtRvsnLrxM+XJXkBT2vnlJXiVw8o/oEesjCKtnzrBOkSvy9ySTYGDfmhcD39rXfzVxQD/zC88+dRSGiIxiU5NNjqsQ+b0MNtCvpPOilmkOnTZCOWeCvIroR'
-};
-
-async function unlockFortress() {
-  const btn = document.getElementById('gate-btn');
-  const errorEl = document.getElementById('gate-error');
-  const pwInput = document.getElementById('gate-password');
-  const password = pwInput.value;
-  if(!password) { errorEl.textContent='Enter your password'; return; }
-  btn.disabled=true; btn.textContent='Unlocking…'; errorEl.textContent='';
-  try {
-    console.log('Starting unlock...');
-    if(!window.crypto || !window.crypto.subtle) {
-      errorEl.textContent = 'Error: Web Crypto API not available (need HTTPS)';
-      btn.disabled=false; btn.textContent='Unlock';
-      return;
-    }
-    console.log('Crypto available, deriving key...');
-    const encoder = new TextEncoder();
-    const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
-    const saltArr  = Uint8Array.from(atob(ENCRYPTED_KEYS.salt),  c=>c.charCodeAt(0));
-    const nonceArr = Uint8Array.from(atob(ENCRYPTED_KEYS.nonce), c=>c.charCodeAt(0));
-    const ctArr    = Uint8Array.from(atob(ENCRYPTED_KEYS.ct),    c=>c.charCodeAt(0));
-    const aesKey = await crypto.subtle.deriveKey(
-      {name:'PBKDF2', salt:saltArr, iterations:100000, hash:'SHA-256'},
-      keyMaterial, {name:'AES-GCM', length:256}, false, ['decrypt']
-    );
-    const decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:nonceArr}, aesKey, ctArr);
-    const keys = JSON.parse(new TextDecoder().decode(decrypted));
-
-    // Inject all keys into fields and localStorage
-    const inject = (storKey, elId, val) => {
-      if(!val) return;
-      localStorage.setItem(storKey, val);
-      const el = document.getElementById(elId);
-      if(el) el.value = val;
-    };
-    inject('fortress_api_key',    'api-key',     keys.claude);
-    inject('fortress_openai_key', 'key-openai',  keys.openai);
-    inject('fortress_google_key', 'key-google',  keys.google);
-    inject('fortress_xai_key',    'key-xai',     keys.xai);
-    inject('fortress_finnhub_key','finnhub-key', keys.finnhub);
-
-    // Hide gate
-    const gate = document.getElementById('password-gate');
-    if(gate) gate.style.display='none';
-    document.body.style.overflow='';
-    sessionStorage.setItem('fortress_unlocked','1');
-
-    // Run all init that was blocked while gate was showing
-    try { updateModelSelection(); } catch(e) {}
-    try { fetchSpaxxYield(); } catch(e) {}
-    try { refreshHistoryBadge(); } catch(e) {}
-    // Ensure trade builder has at least one row
-    setTimeout(() => {
-      try {
-        const builder = document.getElementById('trade-builder');
-        if(builder && builder.children.length === 0) addTrade();
-      } catch(e) {}
-    }, 100);
-
-  } catch(e) {
-    console.error('Unlock error:', e);
-    // Show actual error so we can debug
-    errorEl.textContent = 'Error: ' + (e.message || String(e));
-    errorEl.style.color = '#e74c3c';
-    btn.disabled=false; btn.textContent='Unlock';
-  }
-}
-
-
-window.addEventListener('load', () => {
-  if(sessionStorage.getItem('fortress_unlocked')==='1') {
-    // Already unlocked this session — restore keys and show tool
-    const restoreKey = (storKey, elId) => {
-      const v=localStorage.getItem(storKey); if(v) { const el=document.getElementById(elId); if(el) el.value=v; }
-    };
-    restoreKey('fortress_api_key',    'api-key');
-    restoreKey('fortress_openai_key', 'key-openai');
-    restoreKey('fortress_google_key', 'key-google');
-    restoreKey('fortress_xai_key',    'key-xai');
-    restoreKey('fortress_finnhub_key','finnhub-key');
-    const gate = document.getElementById('password-gate');
-    if(gate) gate.style.display='none';
-    document.body.style.overflow='';
-    try { updateModelSelection(); } catch(e) {}
-    try { fetchSpaxxYield(); } catch(e) {}
-    try { refreshHistoryBadge(); } catch(e) {}
-    setTimeout(()=>{ try{ const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); }catch(e){} },100);
-  } else {
-    // Show gate — keep body scroll locked
-    document.body.style.overflow='hidden';
-    setTimeout(()=>{ const el=document.getElementById('gate-password'); if(el) el.focus(); }, 200);
-    // Still init trade builder in background (hidden behind gate)
-    try { const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); } catch(e) {}
-  }
-});
 
 </script>
 <style>
@@ -3097,6 +2996,109 @@ const weightLabel=w=>w<=0.4?'40%':w<=0.6?'60%':w<=0.8?'80%':'100%';
 
 function toggleSection(listId,arrowId){document.getElementById(listId).classList.toggle('open');document.getElementById(arrowId).classList.toggle('open');}
 function resetScanner(){document.getElementById('scanner-dashboard').style.display='none';document.getElementById('scanner-upload-section').style.display='flex';document.getElementById('scanner-file-input').value='';}
+
+// ENCRYPTED API KEYS (AES-256-GCM)
+const ENCRYPTED_KEYS = {
+  salt:  'UFDXthR508RAGho67XBL8A==',
+  nonce: 'asWczoHBSAF4EufD',
+  ct:    'MPTSPh+eGlUTvGOOP44JWQRLzMRfSdy2F9URieQALW2IDlN0XaYrHLvXZGzZHgEmOQ3gKbcVKjNX1q2WMAOMN+qHoJ6wBLY4dBD93pmWigPamThrc5NCFCxI/X4bJm9sW2Ua3l6YjmTXOyAHuPkWgcR/5/YTf4PQNVhXf0VSMKv7PQO9j48SGsDwlpBTI16Hj2duV0LVl+5P2PG0A0wheILjRxnpjW6bB2P4bSSfT+2MfJsc9mE4O84Csf9p4JzBMOoJOCcHneJhppmCPdDg4vuOo/lZ7+3JNIpLrm8N1c2kNpxPG01+Z7xS1VfQTLMcZtQvKhOBLPDyDOZjdkM7QjfaZAHGfnZQc6GtlQLUIUjCmlZZf70J3Pdn0W6dVm3Odb4Gs0AIdRXlFWLvYekXTHQhTfzs2mbRLtVWRWkM22jvzvNnlg9co8QRT29A2tZxHJzOofnGbKKq7wKEPLp2MdwZ7wgAS3BauMay84gyOTjSszQDLrx/jTAMDDY3so3puvzDtB0sWTHvwF5ONttiHaHEKgkoymM6zf9S2BMRV3Ybe9RPRskmXzyh9F8wfdtRvsnLrxM+XJXkBT2vnlJXiVw8o/oEesjCKtnzrBOkSvy9ySTYGDfmhcD39rXfzVxQD/zC88+dRSGiIxiU5NNjqsQ+b0MNtCvpPOilmkOnTZCOWeCvIroR'
+};
+
+async function unlockFortress() {
+  const btn = document.getElementById('gate-btn');
+  const errorEl = document.getElementById('gate-error');
+  const pwInput = document.getElementById('gate-password');
+  const password = pwInput.value;
+  if(!password) { errorEl.textContent='Enter your password'; return; }
+  btn.disabled=true; btn.textContent='Unlocking…'; errorEl.textContent='';
+  try {
+    console.log('Starting unlock...');
+    if(!window.crypto || !window.crypto.subtle) {
+      errorEl.textContent = 'Error: Web Crypto API not available (need HTTPS)';
+      btn.disabled=false; btn.textContent='Unlock';
+      return;
+    }
+    console.log('Crypto available, deriving key...');
+    const encoder = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
+    const saltArr  = Uint8Array.from(atob(ENCRYPTED_KEYS.salt),  c=>c.charCodeAt(0));
+    const nonceArr = Uint8Array.from(atob(ENCRYPTED_KEYS.nonce), c=>c.charCodeAt(0));
+    const ctArr    = Uint8Array.from(atob(ENCRYPTED_KEYS.ct),    c=>c.charCodeAt(0));
+    const aesKey = await crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt:saltArr, iterations:100000, hash:'SHA-256'},
+      keyMaterial, {name:'AES-GCM', length:256}, false, ['decrypt']
+    );
+    const decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:nonceArr}, aesKey, ctArr);
+    const keys = JSON.parse(new TextDecoder().decode(decrypted));
+
+    // Inject all keys into fields and localStorage
+    const inject = (storKey, elId, val) => {
+      if(!val) return;
+      localStorage.setItem(storKey, val);
+      const el = document.getElementById(elId);
+      if(el) el.value = val;
+    };
+    inject('fortress_api_key',    'api-key',     keys.claude);
+    inject('fortress_openai_key', 'key-openai',  keys.openai);
+    inject('fortress_google_key', 'key-google',  keys.google);
+    inject('fortress_xai_key',    'key-xai',     keys.xai);
+    inject('fortress_finnhub_key','finnhub-key', keys.finnhub);
+
+    // Hide gate
+    const gate = document.getElementById('password-gate');
+    if(gate) gate.style.display='none';
+    document.body.style.overflow='';
+    sessionStorage.setItem('fortress_unlocked','1');
+
+    // Run all init that was blocked while gate was showing
+    try { updateModelSelection(); } catch(e) {}
+    try { fetchSpaxxYield(); } catch(e) {}
+    try { refreshHistoryBadge(); } catch(e) {}
+    // Ensure trade builder has at least one row
+    setTimeout(() => {
+      try {
+        const builder = document.getElementById('trade-builder');
+        if(builder && builder.children.length === 0) addTrade();
+      } catch(e) {}
+    }, 100);
+
+  } catch(e) {
+    console.error('Unlock error:', e);
+    // Show actual error so we can debug
+    errorEl.textContent = 'Error: ' + (e.message || String(e));
+    errorEl.style.color = '#e74c3c';
+    btn.disabled=false; btn.textContent='Unlock';
+  }
+}
+
+
+window.addEventListener('load', () => {
+  if(sessionStorage.getItem('fortress_unlocked')==='1') {
+    // Already unlocked this session — restore keys and show tool
+    const restoreKey = (storKey, elId) => {
+      const v=localStorage.getItem(storKey); if(v) { const el=document.getElementById(elId); if(el) el.value=v; }
+    };
+    restoreKey('fortress_api_key',    'api-key');
+    restoreKey('fortress_openai_key', 'key-openai');
+    restoreKey('fortress_google_key', 'key-google');
+    restoreKey('fortress_xai_key',    'key-xai');
+    restoreKey('fortress_finnhub_key','finnhub-key');
+    const gate = document.getElementById('password-gate');
+    if(gate) gate.style.display='none';
+    document.body.style.overflow='';
+    try { updateModelSelection(); } catch(e) {}
+    try { fetchSpaxxYield(); } catch(e) {}
+    try { refreshHistoryBadge(); } catch(e) {}
+    setTimeout(()=>{ try{ const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); }catch(e){} },100);
+  } else {
+    // Show gate — keep body scroll locked
+    document.body.style.overflow='hidden';
+    setTimeout(()=>{ const el=document.getElementById('gate-password'); if(el) el.focus(); }, 200);
+    // Still init trade builder in background (hidden behind gate)
+    try { const b=document.getElementById('trade-builder'); if(b&&b.children.length===0) addTrade(); } catch(e) {}
+  }
+});
+
 </script>
 </body>
 </html>
