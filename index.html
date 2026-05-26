@@ -4,7 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Fortress Portfolio Suite</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js">
+// ENCRYPTED API KEYS (AES-256-GCM)
+const ENCRYPTED_KEYS = {
+  salt:  'UFDXthR508RAGho67XBL8A==',
+  nonce: 'asWczoHBSAF4EufD',
+  ct:    'MPTSPh+eGlUTvGOOP44JWQRLzMRfSdy2F9URieQALW2IDlN0XaYrHLvXZGzZHgEmOQ3gKbcVKjNX1q2WMAOMN+qHoJ6wBLY4dBD93pmWigPamThrc5NCFCxI/X4bJm9sW2Ua3l6YjmTXOyAHuPkWgcR/5/YTf4PQNVhXf0VSMKv7PQO9j48SGsDwlpBTI16Hj2duV0LVl+5P2PG0A0wheILjRxnpjW6bB2P4bSSfT+2MfJsc9mE4O84Csf9p4JzBMOoJOCcHneJhppmCPdDg4vuOo/lZ7+3JNIpLrm8N1c2kNpxPG01+Z7xS1VfQTLMcZtQvKhOBLPDyDOZjdkM7QjfaZAHGfnZQc6GtlQLUIUjCmlZZf70J3Pdn0W6dVm3Odb4Gs0AIdRXlFWLvYekXTHQhTfzs2mbRLtVWRWkM22jvzvNnlg9co8QRT29A2tZxHJzOofnGbKKq7wKEPLp2MdwZ7wgAS3BauMay84gyOTjSszQDLrx/jTAMDDY3so3puvzDtB0sWTHvwF5ONttiHaHEKgkoymM6zf9S2BMRV3Ybe9RPRskmXzyh9F8wfdtRvsnLrxM+XJXkBT2vnlJXiVw8o/oEesjCKtnzrBOkSvy9ySTYGDfmhcD39rXfzVxQD/zC88+dRSGiIxiU5NNjqsQ+b0MNtCvpPOilmkOnTZCOWeCvIroR'
+};
+
+async function unlockFortress() {
+  const btn = document.getElementById('gate-btn');
+  const errorEl = document.getElementById('gate-error');
+  const pwInput = document.getElementById('gate-password');
+  const password = pwInput.value;
+  if(!password) { errorEl.textContent='Enter your password'; return; }
+  btn.disabled=true; btn.textContent='Unlocking…'; errorEl.textContent='';
+  try {
+    const encoder = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveKey']);
+    const salt = Uint8Array.from(atob(ENCRYPTED_KEYS.salt), c=>c.charCodeAt(0));
+    const nonce = Uint8Array.from(atob(ENCRYPTED_KEYS.nonce), c=>c.charCodeAt(0));
+    const ct = Uint8Array.from(atob(ENCRYPTED_KEYS.ct), c=>c.charCodeAt(0));
+    const aesKey = await crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt, iterations:100000, hash:'SHA-256'},
+      keyMaterial, {name:'AES-GCM', length:256}, false, ['decrypt']
+    );
+    const decrypted = await crypto.subtle.decrypt({name:'AES-GCM', iv:nonce}, aesKey, ct);
+    const keys = JSON.parse(new TextDecoder().decode(decrypted));
+    if(keys.claude)  { localStorage.setItem('fortress_api_key',    keys.claude);   const el=document.getElementById('api-key');       if(el) el.value=keys.claude; }
+    if(keys.openai)  { localStorage.setItem('fortress_openai_key', keys.openai);   const el=document.getElementById('key-openai');   if(el) el.value=keys.openai; }
+    if(keys.google)  { localStorage.setItem('fortress_google_key', keys.google);   const el=document.getElementById('key-google');   if(el) el.value=keys.google; }
+    if(keys.xai)     { localStorage.setItem('fortress_xai_key',    keys.xai);      const el=document.getElementById('key-xai');      if(el) el.value=keys.xai; }
+    if(keys.finnhub) { localStorage.setItem('fortress_finnhub_key',keys.finnhub);  const el=document.getElementById('finnhub-key'); if(el) el.value=keys.finnhub; }
+    document.getElementById('password-gate').style.display='none';
+    document.body.style.overflow='';
+    sessionStorage.setItem('fortress_unlocked','1');
+    try { updateModelSelection(); } catch(e) {}
+    try { fetchSpaxxYield(); } catch(e) {}
+    try { refreshHistoryBadge(); } catch(e) {}
+    try { if(document.getElementById('trade-builder').children.length===0) addTrade(); } catch(e) {}
+  } catch(e) {
+    errorEl.textContent='Incorrect password — try again';
+    btn.disabled=false; btn.textContent='Unlock';
+    pwInput.value=''; pwInput.focus();
+  }
+}
+
+window.addEventListener('load', () => {
+  if(sessionStorage.getItem('fortress_unlocked')==='1') {
+    const ck=localStorage.getItem('fortress_api_key');        if(ck) { const el=document.getElementById('api-key');       if(el) el.value=ck; }
+    const ok=localStorage.getItem('fortress_openai_key');  if(ok) { const el=document.getElementById('key-openai');   if(el) el.value=ok; }
+    const gk=localStorage.getItem('fortress_google_key');  if(gk) { const el=document.getElementById('key-google');   if(el) el.value=gk; }
+    const xk=localStorage.getItem('fortress_xai_key');     if(xk) { const el=document.getElementById('key-xai');      if(el) el.value=xk; }
+    const fk=localStorage.getItem('fortress_finnhub_key'); if(fk) { const el=document.getElementById('finnhub-key'); if(el) el.value=fk; }
+    document.getElementById('password-gate').style.display='none';
+    document.body.style.overflow='';
+  } else {
+    document.body.style.overflow='hidden';
+    setTimeout(()=>{ const el=document.getElementById('gate-password'); if(el) el.focus(); }, 200);
+  }
+});
+
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
 :root{
@@ -398,9 +459,34 @@ input:checked+.slider:before{transform:translateX(20px);}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .s1{animation-delay:0.04s;}.s2{animation-delay:0.08s;}.s3{animation-delay:0.12s;}
 .s4{animation-delay:0.16s;}.s5{animation-delay:0.20s;}.s6{animation-delay:0.24s;}
+
+/* PASSWORD GATE */
+#password-gate{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.25rem;padding:2rem;}
+.gate-card{background:var(--navy-mid);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:400px;text-align:center;}
+.gate-logo{font-size:2.5rem;margin-bottom:0.75rem;}
+.gate-title{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:0.35rem;}
+.gate-subtitle{font-family:var(--mono);font-size:0.72rem;color:var(--g3);margin-bottom:1.5rem;}
+.gate-input{width:100%;background:var(--navy-lt);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.85rem 1rem;color:#fff;font-family:var(--mono);font-size:1rem;outline:none;text-align:center;letter-spacing:0.1em;margin-bottom:0.75rem;}
+.gate-input:focus{border-color:var(--gold);}
+.gate-btn{width:100%;background:var(--gold);color:var(--navy);border:none;padding:0.9rem;border-radius:10px;font-family:var(--sans);font-size:1rem;font-weight:800;cursor:pointer;transition:background 0.2s;}
+.gate-btn:hover{background:var(--gold-d);}
+.gate-btn:disabled{background:var(--g3);cursor:not-allowed;}
+.gate-error{font-family:var(--mono);font-size:0.75rem;color:#e74c3c;min-height:1.2em;margin-top:0.5rem;}
+.gate-hint{font-family:var(--mono);font-size:0.65rem;color:var(--g3);margin-top:0.5rem;}
 </style>
 </head>
 <body>
+<div id="password-gate">
+  <div class="gate-card">
+    <div class="gate-logo">🏰</div>
+    <div class="gate-title">Fortress Suite</div>
+    <div class="gate-subtitle">Institutional Options Analysis · Private Access</div>
+    <input type="password" class="gate-input" id="gate-password" placeholder="Enter password" onkeydown="if(event.key==='Enter')unlockFortress()">
+    <button class="gate-btn" id="gate-btn" onclick="unlockFortress()">Unlock</button>
+    <div class="gate-error" id="gate-error"></div>
+    <div class="gate-hint">Password protected · All data stays on your device</div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -441,11 +527,11 @@ input:checked+.slider:before{transform:translateX(20px);}
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
           <label class="model-check-btn" id="mcb-sonnet">
             <input type="checkbox" id="mc-sonnet" value="claude-sonnet-4-5" checked onchange="updateModelSelection()">
-            ⚡ Claude Sonnet 4.5 <span class="model-cost">~$0.03</span>
+            ⚡ Claude Sonnet 4.5 <span class="model-cost">~$0.003/analysis</span>
           </label>
           <label class="model-check-btn" id="mcb-opus">
             <input type="checkbox" id="mc-opus" value="claude-opus-4-5" onchange="updateModelSelection()">
-            🧠 Claude Opus 4.5 <span class="model-cost">~$0.20</span>
+            🧠 Claude Opus 4.5 <span class="model-cost">~$0.015/analysis</span>
           </label>
         </div>
       </div>
@@ -456,7 +542,7 @@ input:checked+.slider:before{transform:translateX(20px);}
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
           <label class="model-check-btn" id="mcb-gpt5">
             <input type="checkbox" id="mc-gpt5" value="gpt-5" onchange="updateModelSelection()">
-            🤖 GPT-5.5 <span class="model-cost">~$0.08</span>
+            🤖 GPT-5.5 <span class="model-cost">~$0.008/analysis</span>
           </label>
           <input type="password" id="key-openai" class="model-key-input" placeholder="OpenAI API key (sk-...)">
         </div>
@@ -468,7 +554,7 @@ input:checked+.slider:before{transform:translateX(20px);}
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
           <label class="model-check-btn" id="mcb-gemini">
             <input type="checkbox" id="mc-gemini" value="gemini-2.5-pro" onchange="updateModelSelection()">
-            ✨ Gemini 2.5 Pro <span class="model-cost">~$0.10</span>
+            ✨ Gemini 2.5 Pro <span class="model-cost">~$0.008/analysis</span>
           </label>
           <input type="password" id="key-google" class="model-key-input" placeholder="Google AI Studio key (AIza...)">
         </div>
@@ -480,7 +566,7 @@ input:checked+.slider:before{transform:translateX(20px);}
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
           <label class="model-check-btn" id="mcb-grok">
             <input type="checkbox" id="mc-grok" value="grok-4-3" onchange="updateModelSelection()">
-            🌐 Grok 4.3 <span class="model-cost">~$0.04</span>
+            🌐 Grok 4.3 <span class="model-cost">~$0.004/analysis</span>
           </label>
           <input type="password" id="key-xai" class="model-key-input" placeholder="xAI API key (xai-...)">
         </div>
@@ -526,10 +612,10 @@ input:checked+.slider:before{transform:translateX(20px);}
           ✏️ Manual Entry <span style="opacity:0.6;font-size:0.65rem;">free</span>
         </button>
         <button class="data-src-btn" id="ds-claude" onclick="setDataSource('claude',this)">
-          ⚡ Claude Sonnet <span style="opacity:0.6;font-size:0.65rem;">~$0.03</span>
+          ⚡ Claude Sonnet <span style="opacity:0.6;font-size:0.65rem;">~$0.03 one-time pull</span>
         </button>
         <button class="data-src-btn" id="ds-gemini" onclick="setDataSource('gemini',this)">
-          ✨ Gemini 2.5 Pro <span style="opacity:0.6;font-size:0.65rem;">~$0.10 · best search</span>
+          ✨ Gemini 2.5 Pro <span style="opacity:0.6;font-size:0.65rem;">~$0.10 one-time pull · best search</span>
         </button>
       </div>
       <div id="ds-status" style="font-family:var(--mono);font-size:0.68rem;color:var(--g3);line-height:1.5;">
@@ -584,6 +670,7 @@ input:checked+.slider:before{transform:translateX(20px);}
         <label class="field-label">Additional Context</label>
         <input class="ti" id="d-context" placeholder="e.g. Just reported earnings, IV elevated, strong FCF story intact">
       </div>
+      <div id="finnhub-autofill-note" style="font-family:var(--mono);font-size:0.68rem;color:#5ba3f5;margin-bottom:0.5rem;line-height:1.6;display:none;"></div>
       <button class="calc-greeks-btn" onclick="prefillGreeks()">⚡ Pre-calculate Greeks from my data</button>
       <div id="greeks-preview" style="display:none;margin-top:0.65rem;font-family:var(--mono);font-size:0.72rem;color:var(--g3);background:rgba(31,111,235,0.08);border:1px solid rgba(31,111,235,0.15);border-radius:7px;padding:0.65rem 0.85rem;line-height:1.8;"></div>
     </div>
@@ -885,7 +972,9 @@ function updateModelSelection(){
   const names=selected.map(m=>MODELS[m]?.name||m);
   const summary=document.getElementById('model-selection-summary');
   if(summary){
-    summary.textContent=`${selected.length} model${selected.length!==1?'s':''} selected · ${names.join(' + ')}`;
+    const costs={'claude-sonnet-4-5':0.003,'claude-opus-4-5':0.015,'gpt-5':0.008,'gemini-2.5-pro':0.008,'grok-4-3':0.004};
+    const totalCost=selected.reduce((s,m)=>s+(costs[m]||0.005),0);
+    summary.textContent=`${selected.length} model${selected.length!==1?'s':''} selected · ${names.join(' + ')} · ~$${totalCost.toFixed(3)}/analysis`;
     summary.style.color=selected.length>0?'var(--g1)':'#e74c3c';
   }
   // Save third-party keys to localStorage
@@ -903,15 +992,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('api-key').addEventListener('input',e=>{
     localStorage.setItem('fortress_api_key',e.target.value.trim());
   });
-  const savedModel=localStorage.getItem('fortress_model');
-  if(savedModel){
-    selectedModel=savedModel;
-    if(savedModel.includes('opus')){
-      document.getElementById('model-sonnet').classList.remove('active');
-      const ob=document.getElementById('model-opus');
-      ob.classList.add('active','opus');
-    }
-  }
+  // Model preference no longer used (replaced by checkboxes)
+  // Legacy savedModel cleanup
+  localStorage.removeItem('fortress_model');
   const savedFinnhub=localStorage.getItem('fortress_finnhub_key');
   if(savedFinnhub) document.getElementById('finnhub-key').value=savedFinnhub;
   document.getElementById('finnhub-key').addEventListener('input',e=>{
@@ -957,8 +1040,6 @@ function getApiKey(){return document.getElementById('api-key').value.trim();}
 
 function toggleWebSearch(){
   const on=document.getElementById('web-search-toggle').checked;
-  const wsStatus=document.getElementById('ws-status');
-  if(wsStatus){ wsStatus.textContent=on?'ON':'OFF'; wsStatus.style.color=on?'var(--green)':'var(--g3)'; }
   const manualForm=document.getElementById('manual-form');
   if(manualForm) manualForm.classList.toggle('show',!on);
 }
@@ -1161,9 +1242,7 @@ Return ONLY this JSON — no markdown, no text outside JSON:
 
   const body={messages:[{role:'user',content:dataPullPrompt}],max_tokens:1000};
   const raw=await callModelAPI(dataModelId, dataApiKey, body, true);
-  const clean=raw.replace(/```json
-?/g,'').replace(/```
-?/g,'').trim();
+  const clean=raw.split('```json').join('').split('```').join('').trim();
   const js=clean.indexOf('{'),je=clean.lastIndexOf('}');
   if(js===-1||je===-1) throw new Error('Data pull returned no JSON');
   const snap=JSON.parse(clean.slice(js,je+1));
@@ -1445,21 +1524,46 @@ async function fetchFinnhubPrice(ticker){
   const key=getFinnhubKey();
   if(!key) return null;
   try{
-    const res=await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${key}`);
-    if(!res.ok) return null;
-    const d=await res.json();
-    // c=current price, pc=prev close, h=high, l=low, o=open, t=timestamp
-    if(d.c && d.c>0) return {
-      price:d.c,
-      prevClose:d.pc,
-      high:d.h,
-      low:d.l,
-      open:d.o,
-      change:d.c-d.pc,
-      changePct:((d.c-d.pc)/d.pc*100).toFixed(2),
-      timestamp:d.t
-    };
-    return null;
+    // Fetch quote and 52-week data in parallel
+    const [quoteRes, metricRes] = await Promise.allSettled([
+      fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${key}`,{signal:AbortSignal.timeout(4000)}),
+      fetch(`https://finnhub.io/api/v1/stock/metric?symbol=${ticker}&metric=all&token=${key}`,{signal:AbortSignal.timeout(4000)})
+    ]);
+    
+    let price=null, high52=null, low52=null;
+    
+    if(quoteRes.status==='fulfilled' && quoteRes.value.ok){
+      const d=await quoteRes.value.json();
+      if(d.c && d.c>0){
+        price={
+          price:d.c, prevClose:d.pc, high:d.h, low:d.l, open:d.o,
+          change:d.c-d.pc, changePct:((d.c-d.pc)/d.pc*100).toFixed(2), timestamp:d.t
+        };
+      }
+    }
+    
+    if(metricRes.status==='fulfilled' && metricRes.value.ok){
+      const m=await metricRes.value.json();
+      const metrics=m?.metric||{};
+      high52 = metrics['52WeekHigh'] || null;
+      low52  = metrics['52WeekLow']  || null;
+      if(price){
+        price.high52=high52;
+        price.low52=low52;
+        price.forwardPE=metrics['forwardPE']||null;
+        price.fcfYield=metrics['freeCashFlowYieldTTM']?metrics['freeCashFlowYieldTTM']*100:null;
+        price.beta=metrics['beta']||null;
+        price.pe=metrics['peExclExtraTTM']||null;
+        price.revenueGrowthYoy=metrics['revenueGrowthQuarterlyYoy']||null;
+        price.grossMargin=metrics['grossMarginTTM']||null;
+        price.netMargin=metrics['netMarginTTM']||null;
+        price.debtToEquity=metrics['totalDebt/totalEquityAnnual']||null;
+        price.roe=metrics['roeTTM']||null;
+        price.currentRatio=metrics['currentRatioAnnual']||null;
+      }
+    }
+    
+    return price;
   } catch(e){ return null; }
 }
 
@@ -1467,27 +1571,135 @@ async function autoFillPrice(){
   const ticker=document.getElementById('m-ticker').value.trim().toUpperCase();
   if(!ticker) return;
   const key=getFinnhubKey();
-  if(!key){
-    // no key — just update cache status
-    onTickerChange();
-    return;
-  }
-  const priceEl=document.getElementById('d-price');
+  if(!key){ onTickerChange(); return; }
+
   const statusEl=document.getElementById('cache-status');
-  statusEl.innerHTML=`<span style="color:var(--g3);font-family:var(--mono);font-size:0.72rem;">Fetching ${ticker} price…</span>`;
-  const data=await fetchFinnhubPrice(ticker);
-  if(data){
-    priceEl.value=data.price.toFixed(2);
-    const chgColor=data.change>=0?'var(--green)':'#e74c3c';
-    const chgSign=data.change>=0?'+':'';
-    statusEl.innerHTML=`<span class="cache-badge"><span class="cache-dot"></span>${ticker} $${data.price.toFixed(2)} <span style="color:${chgColor}">${chgSign}${data.changePct}%</span> · live</span>`;
-    renderMemoryBadge(ticker);
-    // Also fetch OI and RV if strike is entered
-    autoFillOptionsData(ticker, data.price);
+  statusEl.innerHTML=`<span style="color:var(--g3);font-family:var(--mono);font-size:0.72rem;">Fetching ${ticker} data…</span>`;
+
+  // Fire all Finnhub fetches in parallel
+  const [priceData, metricsData, earningsData] = await Promise.allSettled([
+    fetchFinnhubPrice(ticker),
+    fetchFinnhubMetrics(ticker, key),
+    fetchFinnhubEarnings(ticker, key)
+  ]);
+
+  const price = priceData.status==='fulfilled' ? priceData.value : null;
+  const metrics = metricsData.status==='fulfilled' ? metricsData.value : null;
+  const earnings = earningsData.status==='fulfilled' ? earningsData.value : null;
+
+  const filled = [];
+
+  // Price
+  if(price){
+    const el=document.getElementById('d-price');
+    if(el && (!el.value || el.dataset.autoFilled==='true')){
+      el.value=price.price.toFixed(2);
+      el.dataset.autoFilled='true';
+      el.style.color='#5ba3f5';
+      filled.push(`$${price.price.toFixed(2)}`);
+    }
+    // 52-week range
+    if(price.high52 && price.low52){
+      const hiEl=document.getElementById('d-52hi');
+      const loEl=document.getElementById('d-52lo');
+      if(hiEl&&!hiEl.value){ hiEl.value=price.high52.toFixed(2); hiEl.style.color='#5ba3f5'; hiEl.dataset.autoFilled='true'; }
+      if(loEl&&!loEl.value){ loEl.value=price.low52.toFixed(2); loEl.style.color='#5ba3f5'; loEl.dataset.autoFilled='true'; }
+      filled.push(`52wk $${price.low52.toFixed(0)}–$${price.high52.toFixed(0)}`);
+    }
+    // Forward P/E from quote metrics
+    if(price.forwardPE){
+      const fpeEl=document.getElementById('d-fpe');
+      if(fpeEl&&!fpeEl.value){ fpeEl.value=price.forwardPE.toFixed(1); fpeEl.style.color='#5ba3f5'; fpeEl.dataset.autoFilled='true'; filled.push(`Fwd P/E ${price.forwardPE.toFixed(1)}`); }
+    }
+    // FCF Yield
+    if(price.fcfYield){
+      const fcfEl=document.getElementById('d-fcf');
+      if(fcfEl&&!fcfEl.value){ fcfEl.value=price.fcfYield.toFixed(2); fcfEl.style.color='#5ba3f5'; fcfEl.dataset.autoFilled='true'; filled.push(`FCF ${price.fcfYield.toFixed(2)}%`); }
+    }
+    // Store extra fundamentals in context field if empty
+    const extras = [];
+    if(price.beta) extras.push(`Beta: ${price.beta.toFixed(2)}`);
+    if(price.grossMargin) extras.push(`Gross Margin: ${price.grossMargin.toFixed(1)}%`);
+    if(price.netMargin) extras.push(`Net Margin: ${price.netMargin.toFixed(1)}%`);
+    if(price.roe) extras.push(`ROE: ${price.roe.toFixed(1)}%`);
+    if(price.revenueGrowthYoy) extras.push(`Rev Growth YoY: ${price.revenueGrowthYoy.toFixed(1)}%`);
+    if(price.currentRatio) extras.push(`Current Ratio: ${price.currentRatio.toFixed(2)}`);
+    if(extras.length > 0){
+      const ctxEl=document.getElementById('d-context');
+      if(ctxEl&&!ctxEl.value){
+        ctxEl.value=extras.join(' · ');
+        ctxEl.style.color='#5ba3f5';
+        ctxEl.dataset.autoFilled='true';
+      }
+    }
+    const chgColor=price.change>=0?'var(--green)':'#e74c3c';
+    const chgSign=price.change>=0?'+':'';
+    statusEl.innerHTML=`<span class="cache-badge"><span class="cache-dot"></span>${ticker} $${price.price.toFixed(2)} <span style="color:${chgColor}">${chgSign}${price.changePct}%</span> · Finnhub live</span>`;
   } else {
     statusEl.innerHTML=`<span style="color:#e74c3c;font-family:var(--mono);font-size:0.72rem;">Price fetch failed — enter manually</span>`;
-    onTickerChange();
   }
+
+  // Metrics (P/E, FCF, beta etc)
+  if(metrics){
+    const fpeEl=document.getElementById('d-fpe');
+    const fcfEl=document.getElementById('d-fcf');
+    if(fpeEl && !fpeEl.value && metrics.forwardPE){
+      fpeEl.value=metrics.forwardPE.toFixed(1);
+      fpeEl.style.color='#5ba3f5';
+      filled.push(`Fwd P/E ${metrics.forwardPE.toFixed(1)}`);
+    }
+    if(fcfEl && !fcfEl.value && metrics.fcfYield){
+      fcfEl.value=metrics.fcfYield.toFixed(2);
+      fcfEl.style.color='#5ba3f5';
+      filled.push(`FCF ${metrics.fcfYield.toFixed(2)}%`);
+    }
+  }
+
+  // Earnings date
+  if(earnings){
+    const dteEl=document.getElementById('d-dte');
+    if(dteEl && !dteEl.value && earnings.daysToEarnings !== null){
+      dteEl.value=earnings.daysToEarnings;
+      dteEl.style.color='#5ba3f5';
+      filled.push(`Earnings in ${earnings.daysToEarnings}d`);
+    }
+  }
+
+  // Show what was auto-filled
+  if(filled.length > 0){
+    const note = document.getElementById('finnhub-autofill-note');
+    if(note){
+      note.textContent = `📈 Finnhub auto-filled: ${filled.join(' · ')}`;
+      note.style.display='block';
+    }
+  }
+  // Always show what still needs manual entry
+  const brokerNote = document.getElementById('finnhub-autofill-note');
+  if(brokerNote && brokerNote.style.display==='block'){
+    brokerNote.textContent += ' · Still needed from broker: IV%, 50d MA, 200d MA, IV Rank, RV30/RV10';
+  }
+
+  renderMemoryBadge(ticker);
+  autoFillOptionsData(ticker, price?.price||0);
+}
+
+// fetchFinnhubMetrics merged into fetchFinnhubPrice
+
+async function fetchFinnhubEarnings(ticker, key){
+  try{
+    const res=await fetch(`https://finnhub.io/api/v1/calendar/earnings?symbol=${ticker}&token=${key}`,
+      {signal:AbortSignal.timeout(4000)});
+    if(!res.ok) return null;
+    const d=await res.json();
+    const upcoming=(d?.earningsCalendar||[])
+      .filter(e=>new Date(e.date)>=new Date())
+      .sort((a,b)=>new Date(a.date)-new Date(b.date));
+    if(!upcoming.length) return null;
+    const nextDate=new Date(upcoming[0].date);
+    const today=new Date(); today.setHours(0,0,0,0);
+    const daysToEarnings=Math.round((nextDate-today)/(86400000));
+    return { daysToEarnings, date: upcoming[0].date };
+  } catch(e){ return null; }
 }
 
 async function autoFillOptionsData(ticker, price){
@@ -2055,7 +2267,7 @@ YOUR TASKS:
 
   const body = {messages:[{role:'user',content:prompt}], max_tokens:4000};
   const rawText = await callModelAPI(modelId, apiKey, body, webSearchOn);
-  const raw = rawText.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  const raw = rawText.split('```json').join('').split('```').join('').trim();
   const js = raw.indexOf('{'), je = raw.lastIndexOf('}');
   if (js===-1||je===-1) throw new Error('No JSON in response: '+raw.slice(0,200));
   const card = JSON.parse(raw.slice(js,je+1));
@@ -2087,9 +2299,8 @@ function protocolScoreLabel(s){
 }
 
 function renderProtocolSection(p, preProt){
-  // Prefer Claude's returned data, fall back to pre-calculated
-  const gatesPassed = p?.gatesPassed  ?? preProt?.gatesPassed  ?? null;
-  const gates       = preProt?.gates  ?? [];
+  const gatesPassed = p?.gatesPassed ?? preProt?.gatesPassed ?? null;
+  const gates = preProt?.gates || [];
   const ypd   = p?.yieldPerDelta      ?? preProt?.yieldPerDelta   ?? null;
   const ypds  = p?.yieldPerDeltaScore ?? preProt?.ypd_score       ?? null;
   const tpd   = p?.thetaPerDelta      ?? preProt?.thetaPerDelta   ?? null;
@@ -2103,63 +2314,90 @@ function renderProtocolSection(p, preProt){
   const gateFailReason = p?.gateFailReason ?? '';
 
   if(ypd===null && !preProt?.hasData){
-    return \`<div class="protocol-section"><div class="protocol-title">📊 PROTOCOL v3.5 — Enter IV% to enable</div></div>\`;
+    return '<div class="protocol-section"><div class="protocol-title">📊 PROTOCOL v3.5 — Enter IV% to enable</div></div>';
   }
 
-  // GATE FAILED display
   if(gatesPassed===false){
     const failedGates = gates.filter(g=>g.passed===false);
-    const gateHTML = failedGates.map(g=>\`
-      <div class="protocol-metric" style="border-left:2px solid #e74c3c;">
-        <span class="protocol-metric-label" style="color:#e74c3c;">❌ \${g.gate}</span>
-        <span class="protocol-metric-val" style="color:#e74c3c;">\${g.reason}</span>
-      </div>\`).join('');
-    return \`<div class="protocol-section" style="border-color:rgba(231,76,60,0.3);background:rgba(231,76,60,0.06);">
-      <div class="protocol-title" style="color:#e74c3c;">
-        🚫 PROTOCOL v3.5 — GATE FAILED — Scoring Blocked
-      </div>
-      \${gateHTML}
-      \${gateFailReason?'<div class="protocol-interp" style="color:#e74c3c;">'+gateFailReason+'</div>':''}
-    </div>\`;
+    let gateHTML = '';
+    failedGates.forEach(g=>{
+      gateHTML += '<div class="protocol-metric" style="border-left:2px solid #e74c3c;">' +
+        '<span class="protocol-metric-label" style="color:#e74c3c;">❌ '+g.gate+'</span>' +
+        '<span class="protocol-metric-val" style="color:#e74c3c;">'+g.reason+'</span>' +
+        '</div>';
+    });
+    return '<div class="protocol-section" style="border-color:rgba(231,76,60,0.3);background:rgba(231,76,60,0.06);">' +
+      '<div class="protocol-title" style="color:#e74c3c;">🚫 PROTOCOL v3.5 — GATE FAILED — Scoring Blocked</div>' +
+      gateHTML +
+      (gateFailReason ? '<div class="protocol-interp" style="color:#e74c3c;">'+gateFailReason+'</div>' : '') +
+      '</div>';
   }
 
   const compClass = protocolScoreClass(comp||0);
-  const metric = (label, val, score, unit='') => \`
-    <div class="protocol-metric">
-      <span class="protocol-metric-label">\${label}</span>
-      <span class="protocol-metric-val">\${unit}\${typeof val==='number'?val.toFixed(2):'—'}
-        <span class="protocol-score \${protocolScoreClass(score||0)}">\${score||'—'}/100 \${protocolScoreLabel(score||0)}</span>
-      </span>
-    </div>\`;
 
-  // Gates summary
-  const gatesSummaryHTML = gates.length > 0 ? \`
-    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;">\${
-      gates.map(g=>\`<span style="font-family:var(--mono);font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:10px;
-        background:\${g.passed===true?'rgba(39,174,96,0.15)':g.passed===null?'rgba(201,168,76,0.15)':'rgba(231,76,60,0.15)'};
-        color:\${g.passed===true?'var(--green)':g.passed===null?'var(--gold)':'#e74c3c'};
-        border:1px solid \${g.passed===true?'rgba(39,174,96,0.25)':g.passed===null?'rgba(201,168,76,0.25)':'rgba(231,76,60,0.25)'};">
-        \${g.passed===true?'✅':g.passed===null?'⚠️':'❌'} \${g.gate}</span>\`).join('')
-    }</div>\` : '';
+  function metric(label, val, score, unit){
+    unit = unit||'';
+    return '<div class="protocol-metric">' +
+      '<span class="protocol-metric-label">'+label+'</span>' +
+      '<span class="protocol-metric-val">'+unit+(typeof val==='number'?val.toFixed(2):'—') +
+      ' <span class="protocol-score '+protocolScoreClass(score||0)+'">'+(score||'—')+'/100 '+protocolScoreLabel(score||0)+'</span>' +
+      '</span></div>';
+  }
 
-  return \`<div class="protocol-section">
-    <div class="protocol-title">
-      📊 PROTOCOL v3.5 — Regime-Aware Structural Efficiency
-      <span class="protocol-composite">Composite: <span class="protocol-score \${compClass}" style="font-size:0.72rem;padding:0.2rem 0.6rem;">\${comp||'—'}/100</span></span>
-    </div>
-    \${gatesSummaryHTML}
-    \${metric('Yield per Delta (ann. blended ÷ |Δ|)', ypd, ypds)}
-    \${metric('Theta per Delta × DTE/30 (monthly velocity)', tpd, tpds, '$')}
-    \${metric('Buffer per Delta (regime-aware\${regMod>1?` · \${regMod}× panic boost`:''})', bpd, bpds)}
-    \${regime?'<div style="font-family:var(--mono);font-size:0.65rem;color:var(--g3);margin-top:0.35rem;">📡 '+regime+'</div>':''}
-    \${preProt?.expandingVol!==undefined?'<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+(preProt.expandingVol?'#e67e22':'var(--green)')+';">'+preProt.expandingVolLabel+'</div>':''}
-    \${preProt?.earningsInsideDTE!==undefined?'<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+(preProt.earningsInsideDTE?'#e74c3c':'var(--green)')+';">'+preProt.earningsLabel+'</div>':''}
-    \${preProt?.structuralLabel?'<div style="margin-top:0.5rem;padding-top:0.4rem;border-top:1px solid rgba(255,255,255,0.06);font-family:var(--mono);font-size:0.7rem;">Classification: <strong style="color:'+(preProt.compositeScore>=90?'var(--green)':preProt.compositeScore>=75?'var(--gold)':preProt.compositeScore>=60?'#e67e22':'#e74c3c')+';">'+preProt.structuralLabel+'</strong></div>':''}
-    \${preProt?.convexityRisk>0?'<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">⚡ Gamma Risk</span> '+preProt.convexityLabel+(preProt.gammaDTEWarning?' <strong style=\"color:#e74c3c;\">⚠️ <14 DTE</strong>':'')+' (Score: '+preProt.convexityRisk+'/100)</div>':''}
-    \${preProt?.evLabel?'<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">💰 Expected Value</span> <span style="color:'+(preProt.expectedValue>=0?'var(--green)':'#e74c3c')+';">'+preProt.evLabel+'</span></div>':''}
-    \${interp?'<div class="protocol-interp">💡 '+interp+'</div>':''}
-  </div>\`;
+  let gatesSummaryHTML = '';
+  if(gates.length > 0){
+    let spans = '';
+    gates.forEach(g=>{
+      const color = g.passed===true?'rgba(39,174,96,0.15)':g.passed===null?'rgba(201,168,76,0.15)':'rgba(231,76,60,0.15)';
+      const textColor = g.passed===true?'var(--green)':g.passed===null?'var(--gold)':'#e74c3c';
+      const borderColor = g.passed===true?'rgba(39,174,96,0.25)':g.passed===null?'rgba(201,168,76,0.25)':'rgba(231,76,60,0.25)';
+      const icon = g.passed===true?'✅':g.passed===null?'⚠️':'❌';
+      spans += '<span style="font-family:var(--mono);font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:10px;' +
+        'background:'+color+';color:'+textColor+';border:1px solid '+borderColor+';">'+icon+' '+g.gate+'</span>';
+    });
+    gatesSummaryHTML = '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.6rem;">'+spans+'</div>';
+  }
+
+  const panicBoost = regMod > 1 ? ' · '+regMod.toFixed(2)+'× panic boost' : '';
+
+  let html = '<div class="protocol-section">' +
+    '<div class="protocol-title">📊 PROTOCOL v3.5 — Regime-Aware Structural Efficiency' +
+    '<span class="protocol-composite">Composite: <span class="protocol-score '+compClass+'" style="font-size:0.72rem;padding:0.2rem 0.6rem;">'+(comp||'—')+'/100</span></span>' +
+    '</div>' +
+    gatesSummaryHTML +
+    metric('Yield per Delta (ann. blended ÷ |Δ|)', ypd, ypds) +
+    metric('Theta per Delta × DTE/30 (monthly velocity)', tpd, tpds, '$') +
+    metric('Buffer per Delta (regime-aware'+panicBoost+')', bpd, bpds);
+
+  if(regime){
+    html += '<div style="font-family:var(--mono);font-size:0.65rem;color:var(--g3);margin-top:0.35rem;">📡 '+regime+'</div>';
+  }
+  if(preProt?.expandingVol !== undefined){
+    const volColor = preProt.expandingVol ? '#e67e22' : 'var(--green)';
+    html += '<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+volColor+';">'+preProt.expandingVolLabel+'</div>';
+  }
+  if(preProt?.earningsInsideDTE !== undefined){
+    const earnColor = preProt.earningsInsideDTE ? '#e74c3c' : 'var(--green)';
+    html += '<div style="font-family:var(--mono);font-size:0.65rem;margin-top:0.2rem;color:'+earnColor+';">'+preProt.earningsLabel+'</div>';
+  }
+  if(preProt?.structuralLabel){
+    const labelColor = preProt.compositeScore>=90?'var(--green)':preProt.compositeScore>=75?'var(--gold)':preProt.compositeScore>=60?'#e67e22':'#e74c3c';
+    html += '<div style="margin-top:0.5rem;padding-top:0.4rem;border-top:1px solid rgba(255,255,255,0.06);font-family:var(--mono);font-size:0.7rem;">Classification: <strong style="color:'+labelColor+';">'+preProt.structuralLabel+'</strong></div>';
+  }
+  if(preProt?.convexityRisk > 0){
+    html += '<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">⚡ Gamma Risk</span> '+preProt.convexityLabel+(preProt.gammaDTEWarning?' <strong style=\"color:#e74c3c;\">⚠️ &lt;14 DTE</strong>':'')+' (Score: '+preProt.convexityRisk+'/100)</div>';
+  }
+  if(preProt?.evLabel){
+    const evColor = preProt.expectedValue >= 0 ? 'var(--green)' : '#e74c3c';
+    html += '<div style="margin-top:0.4rem;padding:0.4rem 0.6rem;border-radius:6px;background:rgba(255,255,255,0.03);font-family:var(--mono);font-size:0.68rem;"><span style="color:var(--gold);">💰 Expected Value</span> <span style="color:'+evColor+';">'+preProt.evLabel+'</span></div>';
+  }
+  if(interp){
+    html += '<div class="protocol-interp">💡 '+interp+'</div>';
+  }
+  html += '</div>';
+  return html;
 }
+
 
 function renderCard(c,num,total,modelId,modelInfo){
   const d=c.dataSnapshot||{},r=c.returnProfile||{},g=c.greeks||{},risk=c.risk||{};
@@ -2295,9 +2533,7 @@ Reasoning: ${d.reasoning||'—'}
 Suggested Contracts: ${d.suggestedContracts||'—'} — ${d.sizingNote||'—'}
 Fortress Rules: ${(r.card.fortressRulesCheck||[]).join(' | ')}
 ${r.card.recentNews?'News: '+r.card.recentNews:''}`;
-  }).join('
-
-');
+  }).join('\n\n');
 
   const ticker = (validResults[0].card?.ticker) || validResults[0].trade.desc.split(' ').find(w=>/^[A-Z]{2,5}$/.test(w)) || 'UNKNOWN';
   const portfolioStr = portfolioContext
@@ -2343,9 +2579,7 @@ Respond ONLY with valid JSON:
   try {
     const body = {messages:[{role:'user',content:synthesisPrompt}], max_tokens:3000};
     const rawText = await callModelAPI('claude-opus-4-5', claudeKey, body, false);
-    const raw = rawText.replace(/```json
-?/g,'').replace(/```
-?/g,'').trim();
+    const raw = rawText.split('```json').join('').split('```').join('').trim();
     const js = raw.indexOf('{'), je = raw.lastIndexOf('}');
     if(js===-1||je===-1) throw new Error('No JSON in synthesis response');
     const syn = JSON.parse(raw.slice(js,je+1));
