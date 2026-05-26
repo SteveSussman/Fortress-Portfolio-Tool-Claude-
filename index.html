@@ -1230,7 +1230,7 @@ async function callModelAPI(modelId, apiKey, body, webSearchOn){
   }
 
   if(provider === 'google'){
-    const modelName = 'gemini-2.5-pro-preview-05-06';
+    const modelName = 'gemini-2.5-pro';
     const reqBody={contents:[{role:'user',parts:[{text:body.messages[0].content}]}],generationConfig:{maxOutputTokens:4000}};
     const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,{
       method:'POST',
