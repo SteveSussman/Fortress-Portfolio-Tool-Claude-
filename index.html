@@ -1052,7 +1052,8 @@ function prefillGreeks(){
     document.getElementById('greeks-preview').innerHTML='⚠️ Fill in Strike and Expiration in Trade 1 first.';
     return;
   }
-  const T=Math.max((new Date(expVal)-new Date())/(365*24*3600*1000),0);
+  const expDateG = parseExpiryDate(expVal);
+  const T=expDateG ? Math.max((expDateG-new Date())/(365*24*3600*1000),0) : 0;
   const spaxxRate = parseFloat(document.getElementById('d-spaxx')?.value)||0;
   const g=bsGreeks(S,K,T, spaxxRate>0 ? spaxxRate/100 : 0.045 ,iv/100,true);
   const pop=((1-Math.abs(g.delta))*100).toFixed(1);
@@ -1162,26 +1163,25 @@ async function pullLiveData(ticker, trade, dataModelId, dataApiKey){
   const todayStr=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   const price=document.getElementById('d-price')?.value.trim()||'';
 
-  const dataPullPrompt=`You are a financial data retrieval engine. Your ONLY job is to fetch and return verified live market data for ${ticker}. Do NOT analyze the trade. Do NOT provide recommendations. ONLY return data.
+  const dataPullPrompt=`You are a financial data retrieval engine. Today is ${todayStr}. Your ONLY job is to fetch and return verified live market data for ${ticker}. Do NOT analyze. ONLY return data as JSON.
 
-TODAY: ${todayStr}
+SEARCH NOW for ${ticker} and return these exact fields:
+1. Current stock price (search "${ticker} stock price today")
+2. 50-day moving average (search "${ticker} 50 day moving average")
+3. 200-day moving average (search "${ticker} 200 day moving average")  
+4. Next earnings date (search "${ticker} next earnings date 2026") — calculate days from today (${todayStr})
+5. IV Rank (search "${ticker} IV rank implied volatility rank")
+6. FCF yield (search "${ticker} free cash flow yield")
+7. SPAXX yield (search "SPAXX 7 day yield" or "Fidelity government money market yield")
+8. Recent news: 1-3 bullet headlines from last 7 days only (search "${ticker} news today")
+9. 52-week high and low (search "${ticker} 52 week high low")
+10. Forward P/E (search "${ticker} forward PE ratio")
 
-USE WEB SEARCH to find ALL of the following for ${ticker}:
-1. Current stock price (live/real-time)
-2. 50-day moving average
-3. 200-day moving average
-4. Next earnings date and days until earnings
-5. IV Rank or implied volatility environment (approximate)
-6. FCF yield or free cash flow context
-7. Current SPAXX / 4-week T-bill yield
-8. 1-3 recent notable news headlines (last 7 days only)
-9. 52-week high and low
-10. Forward P/E if available
+CRITICAL: You MUST search for and return the actual current stock price. Do not return 0.
+Return ONLY valid JSON, no markdown, no explanation:
+{"ticker":"${ticker}","fetchDate":"${todayStr}","underlying":0,"ma50":0,"ma200":0,"daysToEarnings":0,"earningsDate":"","ivRank":"","fcfYield":"","spaxYield":"","recentNews":"• headline 1\n• headline 2","week52High":0,"week52Low":0,"forwardPE":"","dataConfidence":"High/Medium/Low","priceSource":"source name"}`;
 
-Return ONLY this JSON — no markdown, no text outside JSON:
-{"ticker":"${ticker}","fetchDate":"${todayStr}","underlying":0,"ma50":0,"ma200":0,"daysToEarnings":0,"earningsDate":"","ivRank":"","fcfYield":"","spaxYield":"","recentNews":"brief 1-3 bullet summary","week52High":0,"week52Low":0,"forwardPE":"","dataConfidence":"High/Medium/Low","priceSource":"source name"}`;
-
-  const body={messages:[{role:'user',content:dataPullPrompt}],max_tokens:1000};
+  const body={messages:[{role:'user',content:dataPullPrompt}],max_tokens:2000};
   const raw=await callModelAPI(dataModelId, dataApiKey, body, true);
   const clean=raw.split('```json').join('').split('```').join('').trim();
   const js=clean.indexOf('{'),je=clean.lastIndexOf('}');
@@ -1789,6 +1789,34 @@ function clearTickerMemory(){
 }
 
 // ── PRE-CALCULATION ENGINE ───────────────────────────────────────────────────
+function parseExpiryDate(expStr) {
+  if(!expStr) return null;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Already has a 4-digit year — use as-is
+  if(/\d{4}/.test(expStr)) {
+    const d = new Date(expStr);
+    return isNaN(d) ? null : d;
+  }
+
+  // Short form like "6/18" or "6-18" — find the next occurrence
+  const parts = expStr.split(/[\/\-\.]/).map(p=>parseInt(p));
+  if(parts.length >= 2) {
+    const month = parts[0] - 1; // 0-indexed
+    const day   = parts[1];
+    // Try this year first
+    let candidate = new Date(today.getFullYear(), month, day);
+    candidate.setHours(0,0,0,0);
+    // If the date has already passed, use next year
+    if(candidate < today) {
+      candidate = new Date(today.getFullYear() + 1, month, day);
+    }
+    return candidate;
+  }
+  return null;
+}
+
 function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx, manualOI, manualRV, manualIV30, manualRV10, manualBidAsk, manualDTE) {
   const S = parseFloat(manualPrice) || 0;
   const K = parseFloat(trade.strike) || 0;
@@ -1797,11 +1825,11 @@ function preCalcTrade(trade, manualPrice, manualIV, manualSpaxx, manualOI, manua
   const longStrike = parseFloat(trade.longStrike) || 0;
   const spaxx = parseFloat(manualSpaxx) || 4.5;
 
-  // Parse expiry
-  const expDate = new Date(trade.exp);
+  // Parse expiry — smart year resolution
+  const expDate = parseExpiryDate(trade.exp);
   const today = new Date();
   today.setHours(0,0,0,0);
-  const dte = Math.max(0, Math.round((expDate - today) / 86400000));
+  const dte = expDate ? Math.max(0, Math.round((expDate - today) / 86400000)) : 0;
   const dteYears = dte / 365;
 
   // Core math
